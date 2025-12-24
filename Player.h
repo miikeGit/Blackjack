@@ -1,8 +1,9 @@
 #ifndef BLACKJACK_PLAYER_H
 #define BLACKJACK_PLAYER_H
 
-#include <cstdint>
 #include "Deck.h"
+
+#include <cstdint>
 
 class Player {
 public:
@@ -10,14 +11,13 @@ public:
   void Hit();
   void Stand();
 
-private:
-  ~Player() = default;
-
   Player(Player&) = delete;
   Player(Player&&) = delete;
 
   Player operator=(Player&) = delete;
   Player operator=(Player&&) = delete;
+private:
+  ~Player() = default;
 
   uint32_t balance;
   uint32_t stake;

@@ -21,15 +21,14 @@ public:
     return deck;
   }
 
-private:
-  Deck();
-  ~Deck() = default;
-
   Deck(const Deck &other) = delete;
   Deck(Deck &&other) = delete;
 
   Deck & operator=(const Deck &other) = delete;
   Deck & operator=(Deck &&other) = delete;
+private:
+  Deck();
+  ~Deck() = default;
 
   std::vector<Card> deck;
 };
