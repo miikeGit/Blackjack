@@ -17,6 +17,23 @@ uint32_t Player::GetBalance() const {
   return balance;
 }
 
-std::vector<Card> Player::GetHand() const {
-    return hand;
+QString CardToPath(const Card& card) {
+    QString suitRank { QString::number(static_cast<int>(card.suit)) + "_"
+                     + QString::number(static_cast<int>(card.rank)) };
+
+    QString path { ":/images/textures/" + suitRank + ".png" };
+    return path;
+}
+
+void Player::DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView) {
+    uint32_t offset = 0;
+    for (const Card& card : hand) {
+        QPixmap pixmap(CardToPath(card));
+        QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
+        item->setScale(3);
+        item->setPos(offset, offset);
+        gView->setScene(scene.get());
+
+        offset += 30;
+    }
 }

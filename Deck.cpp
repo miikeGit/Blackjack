@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <random>
 #include <stdexcept>
 #include <QRandomGenerator64>
 
@@ -18,8 +17,6 @@ Deck::Deck() {
 }
 
 void Deck::Shuffle() {
-    std::random_device rd;
-    std::mt19937 g(rd());
     std::ranges::shuffle(deck, *QRandomGenerator::global());
 }
 

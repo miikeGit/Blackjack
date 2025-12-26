@@ -1,37 +1,26 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include <QGraphicsPixmapItem>
+#include <memory>
 
-QString CardToPath(const Card& card) {
-    QString suitRank { QString::number(static_cast<int>(card.suit)) + "_" + QString::number(static_cast<int>(card.rank)) };
-    QString path { ":/images/textures/" + suitRank + ".png" };
-    return path;
-}
-
-MainWindow::MainWindow(Player& player, QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), _player(player) {
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(std::make_shared<Ui::MainWindow>()),
+    scene(std::make_shared<QGraphicsScene>(this))
+{
+    Deck& deck = Deck::GetDeck();
+    _player = std::make_unique<Player>(deck);
+    _dealer = std::make_unique<Player>(deck);
 
     ui->setupUi(this);
-    ui->label->setText("Balance: " + QString::number(player.GetBalance()));
+    ui->balance->setText("Balance: " + QString::number(_player->GetBalance()));
 
-    player.Hit();
-    DrawHand(player);
+    _player->Hit();
+    _dealer->Hit();
+    _player->Hit();
+    _dealer->Hit();
+    _player->DrawHand(scene, ui->playerHand);
+    _dealer->DrawHand(scene, ui->dealerHand);
 }
 
-MainWindow::~MainWindow() {
-    delete ui;
-}
-
-void MainWindow::DrawHand(Player& player) {
-    std::vector<Card> hand = player.GetHand();
-
-    QGraphicsScene *scene = nullptr;
-
-    for (const Card& card : hand) {
-        QPixmap pixmap(CardToPath(card));
-        scene = new QGraphicsScene(this);
-        QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
-        item->setScale(3);
-        ui->graphicsView->setScene(scene);
-    }
-}
+MainWindow::~MainWindow() {}

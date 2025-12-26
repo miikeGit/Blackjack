@@ -17,7 +17,7 @@
    <string notr="true">background-color: rgb(0, 85, 0);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="balance">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -30,11 +30,21 @@
      <string>Balance:</string>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="graphicsView">
+   <widget class="QGraphicsView" name="playerHand">
     <property name="geometry">
      <rect>
       <x>300</x>
       <y>330</y>
+      <width>256</width>
+      <height>192</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="dealerHand">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>20</y>
       <width>256</width>
       <height>192</height>
      </rect>

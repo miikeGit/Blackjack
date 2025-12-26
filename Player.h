@@ -4,16 +4,19 @@
 #include "Deck.h"
 
 #include <cstdint>
+#include <memory>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsView>
 
 class Player {
 public:
   explicit Player(Deck& deck);
 
   uint32_t GetBalance() const;
-  std::vector<Card> GetHand() const;
 
   void Hit();
   void Stand();
+  void DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
 
   Player(Player&) = delete;
   Player(Player&&) = delete;
