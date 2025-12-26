@@ -8,6 +8,10 @@
 class Player {
 public:
   explicit Player(Deck& deck);
+
+  uint32_t GetBalance() const;
+  std::vector<Card> GetHand() const;
+
   void Hit();
   void Stand();
 
@@ -16,8 +20,8 @@ public:
 
   Player operator=(Player&) = delete;
   Player operator=(Player&&) = delete;
-private:
   ~Player() = default;
+private:
 
   uint32_t balance;
   uint32_t stake;

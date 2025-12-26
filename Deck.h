@@ -3,8 +3,8 @@
 
 #include <vector>
 
-enum class Suit { HEARTS, CLUBS, DIAMONDS, SPADES };
-enum class Rank { ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING };
+enum class Suit { HEARTS = 1, CLUBS, DIAMONDS, SPADES };
+enum class Rank { ACE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING };
 
 struct Card {
   Suit suit;
@@ -21,14 +21,14 @@ public:
     return deck;
   }
 
-  Deck(const Deck &other) = delete;
-  Deck(Deck &&other) = delete;
+  Deck(const Deck &other) = default;
+  Deck(Deck &&other) = default;
 
-  Deck & operator=(const Deck &other) = delete;
-  Deck & operator=(Deck &&other) = delete;
+  Deck & operator=(const Deck &other) = default;
+  Deck & operator=(Deck &&other) = default;
+  ~Deck() = default;
 private:
   Deck();
-  ~Deck() = default;
 
   std::vector<Card> deck;
 };

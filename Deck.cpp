@@ -4,12 +4,13 @@
 #include <cstdint>
 #include <random>
 #include <stdexcept>
+#include <QRandomGenerator64>
 
 Deck::Deck() {
   deck.reserve(52);
 
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 13; j++) {
+  for (int i = 1; i < 5; i++) {
+    for (int j = 1; j < 14; j++) {
       uint8_t value = (j > 10) ? 10 : j;
       deck.emplace_back(static_cast<Suit>(i), static_cast<Rank>(value));
     }
@@ -17,14 +18,16 @@ Deck::Deck() {
 }
 
 void Deck::Shuffle() {
-  auto rng = std::default_random_engine{};
-  std::ranges::shuffle(deck, rng);
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::ranges::shuffle(deck, *QRandomGenerator::global());
 }
 
 Card Deck::Pop() {
   if (deck.empty())
     throw std::runtime_error("The deck is empty!");
 
+  Shuffle();
   const Card tmp = deck.back();
   deck.pop_back();
   return tmp;

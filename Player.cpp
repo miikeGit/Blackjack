@@ -12,3 +12,11 @@ void Player::Hit() {
 void Player::Stand() {
   IsStanding = false;
 }
+
+uint32_t Player::GetBalance() const {
+  return balance;
+}
+
+std::vector<Card> Player::GetHand() const {
+    return hand;
+}
