@@ -1,7 +1,6 @@
 #include "Deck.h"
 
 #include <algorithm>
-#include <cstdint>
 #include <stdexcept>
 #include <QRandomGenerator64>
 
@@ -10,10 +9,11 @@ Deck::Deck() {
 
   for (int i = 1; i < 5; i++) {
     for (int j = 1; j < 14; j++) {
-      uint8_t value = (j > 10) ? 10 : j;
-      deck.emplace_back(static_cast<Suit>(i), static_cast<Rank>(value));
+      deck.emplace_back(static_cast<Suit>(i), static_cast<Rank>(j), std::min(j, 10));
     }
   }
+
+  Shuffle();
 }
 
 void Deck::Shuffle() {
@@ -24,7 +24,6 @@ Card Deck::Pop() {
   if (deck.empty())
     throw std::runtime_error("The deck is empty!");
 
-  Shuffle();
   const Card tmp = deck.back();
   deck.pop_back();
   return tmp;

@@ -10,7 +10,7 @@ void Player::Hit() {
 }
 
 void Player::Stand() {
-  IsStanding = false;
+  IsStanding = true;
 }
 
 uint32_t Player::GetBalance() const {
@@ -32,8 +32,8 @@ void Player::DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gVie
         QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
         item->setScale(3);
         item->setPos(offset, offset);
-        gView->setScene(scene.get());
 
         offset += 30;
     }
+    gView->setScene(scene.get());
 }

@@ -19,8 +19,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private:
-    std::shared_ptr<QGraphicsScene> scene;
-    std::shared_ptr<Ui::MainWindow> ui;
+    std::shared_ptr<QGraphicsScene> playerScene;
+    std::shared_ptr<QGraphicsScene> dealerScene;
+    std::unique_ptr<Ui::MainWindow> ui;
     std::unique_ptr<Player> _player;
     std::unique_ptr<Player> _dealer;
 };
