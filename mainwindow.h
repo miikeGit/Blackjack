@@ -1,11 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "Player.h"
+#include "game.h"
 
 #include <QMainWindow>
 #include <QGraphicsPixmapItem>
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,11 +18,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private:
+    Game game;
     std::shared_ptr<QGraphicsScene> playerScene;
     std::shared_ptr<QGraphicsScene> dealerScene;
     std::unique_ptr<Ui::MainWindow> ui;
-    std::unique_ptr<Player> _player;
-    std::unique_ptr<Player> _dealer;
+private slots:
+    void on_hitButton_clicked();
 };
 
 #endif

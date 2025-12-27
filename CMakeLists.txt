@@ -23,9 +23,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QTBlackjack
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        Deck.cpp Player.cpp
-        Deck.h Player.h
+        deck.cpp player.cpp
+        deck.h player.h
         assets.qrc
+        game.h game.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QTBlackjack APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

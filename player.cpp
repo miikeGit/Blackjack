@@ -1,16 +1,12 @@
-#include "Player.h"
+#include "player.h"
 
-Player::Player(Deck& deck) : balance(1000), stake(0), handValue(0), IsStanding(false), deck(deck)  {
-  hand.reserve(5);
+Player::Player(Deck& deck) : balance(1000), stake(0), handValue(0), deck(deck)  {
+  hand.reserve(11);
 }
 
 void Player::Hit() {
   hand.emplace_back(deck.Pop());
   handValue += static_cast<int>(hand.back().rank);
-}
-
-void Player::Stand() {
-  IsStanding = true;
 }
 
 uint32_t Player::GetBalance() const {
@@ -31,7 +27,7 @@ void Player::DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gVie
         QPixmap pixmap(CardToPath(card));
         QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
         item->setScale(3);
-        item->setPos(offset, offset);
+        item->setPos(offset, 0);
 
         offset += 30;
     }

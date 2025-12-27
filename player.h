@@ -1,7 +1,7 @@
 #ifndef BLACKJACK_PLAYER_H
 #define BLACKJACK_PLAYER_H
 
-#include "Deck.h"
+#include "deck.h"
 
 #include <cstdint>
 #include <memory>
@@ -15,14 +15,13 @@ public:
   uint32_t GetBalance() const;
 
   void Hit();
-  void Stand();
   void DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
 
-  Player(Player&) = delete;
-  Player(Player&&) = delete;
+  // Player(Player& other);
+  // Player(Player&& other);
 
-  Player operator=(Player&) = delete;
-  Player operator=(Player&&) = delete;
+  // Player operator=(Player&) = default;
+  // Player operator=(Player&&) = default;
   ~Player() = default;
 private:
 
@@ -30,7 +29,6 @@ private:
   uint32_t stake;
   uint8_t handValue;
   std::vector<Card> hand;
-  bool IsStanding;
   Deck& deck;
 };
 
