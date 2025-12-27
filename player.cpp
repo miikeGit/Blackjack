@@ -1,12 +1,13 @@
 #include "player.h"
 
-Player::Player(Deck& deck) : balance(1000), stake(0), handValue(0), deck(deck)  {
+Player::Player(Deck& deck) : balance(1000), stake(0), handValue(0) {
   hand.reserve(11);
 }
 
-void Player::Hit() {
+void Player::Hit(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView) {
   hand.emplace_back(deck.Pop());
   handValue += static_cast<int>(hand.back().rank);
+  DrawHand(scene, gView);
 }
 
 uint32_t Player::GetBalance() const {
@@ -32,4 +33,29 @@ void Player::DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gVie
         offset += 30;
     }
     gView->setScene(scene.get());
+}
+
+// Player::Player(Player& other) {
+//     balance = other.balance;
+//     stake = other.stake;
+//     handValue = other.handValue;
+//     hand = other.hand;
+//     Deck& deck;
+// }
+Player::Player(Player&& other) : deck(Deck::GetDeck()) {
+    balance = other.balance;
+    stake = other.stake;
+    handValue = other.handValue;
+    hand = std::move(other.hand);
+}
+
+// Player operator=(Player&) = default;
+Player& Player::operator=(Player&& other) {
+    if (this != &other) {
+        balance = std::move(other.balance);
+        stake = std::move(other.stake);
+        handValue = std::move(other.handValue);
+        hand = std::move(other.hand);
+    }
+    return *this;
 }

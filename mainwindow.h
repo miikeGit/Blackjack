@@ -18,10 +18,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private:
-    Game game;
-    std::shared_ptr<QGraphicsScene> playerScene;
-    std::shared_ptr<QGraphicsScene> dealerScene;
+    Game game = Game();
     std::unique_ptr<Ui::MainWindow> ui;
+    std::shared_ptr<QGraphicsScene> _playerScene;
+    std::shared_ptr<QGraphicsScene> _dealerScene;
 private slots:
     void on_hitButton_clicked();
 };

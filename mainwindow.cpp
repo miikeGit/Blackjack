@@ -10,15 +10,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(std::make_unique<Ui::MainWindow>())
 {
     ui->setupUi(this);
-    game = Game(std::make_shared<QGraphicsScene>(this), std::make_shared<QGraphicsScene>(this),
-                 ui->playerHand, ui->dealerHand);
+    _playerScene = std::make_shared<QGraphicsScene>(this);
+    _dealerScene = std::make_shared<QGraphicsScene>(this);
 
-    // ui->balance->setText("Balance: " + QString::number(_player->GetBalance()));
+    game.UpdateBalanceUI(ui->balance);
+    game.InitTable(_playerScene, ui->playerHand,
+                   _dealerScene, ui->dealerHand);
 }
 
 MainWindow::~MainWindow() {}
 
 void MainWindow::on_hitButton_clicked() {
-    // _player->Hit();
-    // _player->DrawHand(playerScene, ui->playerHand);
+    game.GetPlayer()->Hit(_playerScene, ui->playerHand);
 }
