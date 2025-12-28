@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1079</width>
-    <height>596</height>
+    <width>1324</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">
-    QLabel { font-family: "balatro"; font-weight: bold; font-size: 20px; letter-spacing: 3px; }
+    QLabel { font-family: &quot;balatro&quot;; font-weight: bold; font-size: 40px; letter-spacing: 3px; }
     QPushButton {
         min-width: 120px;
         min-height: 120px;
@@ -23,34 +23,35 @@
         max-height: 120px;
         border-radius: 60px;
         color: white;
-        font-family: "balatro";
+        font-family: &quot;balatro&quot;;
         font-weight: bold;
         font-size: 30px;
         border: 3px dashed #1e1e1e;
     }
     QPushButton:pressed { border-bottom: 2px solid #9e3a18; margin-top: 4px; }
+    QPushButton:disabled {
+        background-color: #4a4a4a;
+        color: #888888;
+        border: 3px solid #333333;
+        border-bottom: 2px solid #333333;
+        border-color: #666666;
+        margin-top: 4px;
+    }
 
-    QPushButton#bet5Button { background-color: #248ef1; border-bottom: 6px dashed #1761a6; }
-    QPushButton#bet10Button { background-color: #30bd20; border-bottom: 6px dashed #208215; }
-    QPushButton#bet25Button { background-color: #ed7d21; border-bottom: 6px dashed #ab5a18; }
-    QPushButton#bet50Button { background-color: #f01d1d; border-bottom: 6px dashed #850f0f; }
-    QPushButton#bet100Button { background-color: #9613c2; border-bottom: 6px dashed #5f0c7a; }
+    QPushButton#bet5Button:enabled { background-color: #248ef1; border-bottom: 6px dashed #1761a6; }
+    QPushButton#bet10Button:enabled { background-color: #30bd20; border-bottom: 6px dashed #208215; }
+    QPushButton#bet25Button:enabled { background-color: #ed7d21; border-bottom: 6px dashed #ab5a18; }
+    QPushButton#bet50Button:enabled { background-color: #f01d1d; border-bottom: 6px dashed #850f0f; }
+    QPushButton#bet100Button:enabled { background-color: #9613c2; border-bottom: 6px dashed #5f0c7a; }
 
     QPushButton#standButton { background-color: #ef476f; border-bottom: 6px solid #a32a47; }
     QPushButton#hitButton { background-color: #118ab2; border-bottom: 6px solid #0a5d78; }
 
-    #BetSize { font-size: 30px; }
+    #BetSize { font-size: 70px; }
    </string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="balance">
-      <property name="text">
-       <string>Balance:</string>
-      </property>
-     </widget>
-    </item>
     <item row="2" column="0">
      <widget class="QGraphicsView" name="dealerHand">
       <property name="frameShape">
@@ -118,6 +119,16 @@
       </item>
      </layout>
     </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="balance">
+      <property name="text">
+       <string>Balance:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+      </property>
+     </widget>
+    </item>
    </layout>
    <widget class="QLabel" name="BetSize">
     <property name="geometry">
@@ -135,11 +146,11 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <zorder>balance</zorder>
    <zorder>dealerHand</zorder>
    <zorder>playerHand</zorder>
    <zorder>BetSize</zorder>
    <zorder></zorder>
+   <zorder>balance</zorder>
   </widget>
  </widget>
  <resources/>

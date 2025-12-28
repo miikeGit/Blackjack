@@ -35,8 +35,9 @@ private:
 	QPropertyAnimation* configureShakeAnimation(QPoint pos, QLabel* label);
 	QPropertyAnimation* configureFadeAnimation(QLabel* label);
 
-	void animateBetPopup(QString text);
+	void animateLabelPopup(QString text);
 	void resizeEvent(QResizeEvent* event);
+	void UpdateBalanceUI();
 
 private slots:
 	void on_hitButton_clicked();

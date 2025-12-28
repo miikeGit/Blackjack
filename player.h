@@ -24,9 +24,6 @@ public:
 	~Player() = default;
 private:
 	void DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
-
-	uint32_t balance;
-	uint32_t stake;
 	uint8_t handValue;
 	std::vector<Card> hand;
 	Deck& deck = Deck::GetDeck();

@@ -18,12 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->playerHand->hide();
 	ui->standButton->hide();
 	ui->hitButton->hide();
-	ui->BetSize->hide();
 
 	_playerScene = std::make_shared<QGraphicsScene>(this);
 	_dealerScene = std::make_shared<QGraphicsScene>(this);
 
-	game.UpdateBalanceUI(ui->balance);
+	UpdateBalanceUI();
 	game.InitTable(_playerScene, ui->playerHand,
 								 _dealerScene, ui->dealerHand);
 }
@@ -89,7 +88,7 @@ QPropertyAnimation* MainWindow::configureFadeAnimation(QLabel* label) {
 	return fadeAnimation;
 }
 
-void MainWindow::animateBetPopup(QString text) {
+void MainWindow::animateLabelPopup(QString text) {
 	QLabel *popupLabel = new QLabel(text, this);
 
 	QFont balatroFont("balatro");
@@ -106,31 +105,68 @@ void MainWindow::animateBetPopup(QString text) {
 	QPropertyAnimation *shake = configureShakeAnimation(randomPos, popupLabel);
 	QPropertyAnimation *fade = configureFadeAnimation(popupLabel);
 
+	QPoint center = {(centralWidget()->width() - ui->BetSize->width()) / 2,
+									 (centralWidget()->height() - ui->BetSize->height()) / 2};
+	QPropertyAnimation *size2 = configureSizeAnimation(center, ui->BetSize);
+	QPropertyAnimation *shake2 = configureShakeAnimation(center, ui->BetSize);
+
 	QParallelAnimationGroup *group = new QParallelAnimationGroup(popupLabel);
 	group->addAnimation(size);
 	group->addAnimation(shake);
 	group->addAnimation(fade);
 
+	QParallelAnimationGroup *group2 = new QParallelAnimationGroup(ui->BetSize);
+	group2->addAnimation(size2);
+	group2->addAnimation(shake2);
+
+
 	popupLabel->show();
 	group->start(QAbstractAnimation::DeleteWhenStopped);
+	group2->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void MainWindow::UpdateBalanceUI() {
+	ui->balance->setText("$" + QString::number(game.GetBalance()));
+	ui->BetSize->setText(QString::number(game.GetCurrentBet()));
+
+	if (game.GetBalance() < 100) ui->bet100Button->setEnabled(false);
+	if (game.GetBalance() < 50) ui->bet50Button->setEnabled(false);
+	if (game.GetBalance() < 25) ui->bet25Button->setEnabled(false);
+	if (game.GetBalance() < 10) ui->bet10Button->setEnabled(false);
+	if (game.GetBalance() < 5) ui->bet5Button->setEnabled(false);
 }
 
 void MainWindow::on_bet5Button_clicked() {
-	animateBetPopup("+ " + QString::number(5));
+	game.SetBalance(game.GetBalance() - 5);
+	game.SetCurrentBet(game.GetCurrentBet() + 5);
+	UpdateBalanceUI();
+	animateLabelPopup("+ " + QString::number(5));
 }
 
 void MainWindow::on_bet10Button_clicked() {
-	animateBetPopup("+ " + QString::number(10));
+	game.SetBalance(game.GetBalance() - 10);
+	game.SetCurrentBet(game.GetCurrentBet() + 10);
+	UpdateBalanceUI();
+	animateLabelPopup("+ " + QString::number(10));
 }
 
 void MainWindow::on_bet25Button_clicked(){
-	animateBetPopup("+ " + QString::number(25));
+	game.SetBalance(game.GetBalance() - 25);
+	game.SetCurrentBet(game.GetCurrentBet() + 25);
+	UpdateBalanceUI();
+	animateLabelPopup("+ " + QString::number(25));
 }
 
 void MainWindow::on_bet50Button_clicked() {
-	animateBetPopup("+ " + QString::number(50));
+	game.SetBalance(game.GetBalance() - 50);
+	game.SetCurrentBet(game.GetCurrentBet() + 50);
+	UpdateBalanceUI();
+	animateLabelPopup("+ " + QString::number(50));
 }
 
 void MainWindow::on_bet100Button_clicked() {
-	animateBetPopup("+ " + QString::number(100));
+	game.SetBalance(game.GetBalance() - 100);
+	game.SetCurrentBet(game.GetCurrentBet() + 100);
+	UpdateBalanceUI();
+	animateLabelPopup("+ " + QString::number(100));
 }
