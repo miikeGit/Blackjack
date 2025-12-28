@@ -10,26 +10,26 @@
 
 class Player {
 public:
-  explicit Player(Deck& deck);
+	explicit Player(Deck& deck);
 
-  uint32_t GetBalance() const;
+	uint32_t GetBalance() const;
 
-  void Hit(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
+	void Hit(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
 
-  Player(Player& other);
-  Player(Player&& other);
+	Player(Player& other);
+	Player(Player&& other);
 
-  Player operator=(Player& other);
-  Player& operator=(Player&& other);
-  ~Player() = default;
+	Player operator=(Player& other);
+	Player& operator=(Player&& other);
+	~Player() = default;
 private:
-  void DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
+	void DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
 
-  uint32_t balance;
-  uint32_t stake;
-  uint8_t handValue;
-  std::vector<Card> hand;
-  Deck& deck = Deck::GetDeck();
+	uint32_t balance;
+	uint32_t stake;
+	uint8_t handValue;
+	std::vector<Card> hand;
+	Deck& deck = Deck::GetDeck();
 };
 
 #endif

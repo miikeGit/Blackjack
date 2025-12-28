@@ -8,31 +8,31 @@ enum class Suit { HEARTS = 1, CLUBS, DIAMONDS, SPADES };
 enum class Rank { ACE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING };
 
 struct Card {
-  Suit suit;
-  Rank rank;
-  uint8_t value;
+	Suit suit;
+	Rank rank;
+	uint8_t value;
 };
 
 class Deck {
 public:
-  void Shuffle();
-  Card Pop();
+	void Shuffle();
+	Card Pop();
 
-  static Deck& GetDeck() {
-    static Deck deck;
-    return deck;
-  }
+	static Deck& GetDeck() {
+		static Deck deck;
+		return deck;
+	}
 
-  Deck(const Deck &other) = delete;
-  Deck(Deck &&other) = delete;
+	Deck(const Deck &other) = delete;
+	Deck(Deck &&other) = delete;
 
-  Deck & operator=(const Deck &other) = delete;
-  Deck & operator=(Deck &&other) = delete;
-  ~Deck() = default;
+	Deck & operator=(const Deck &other) = delete;
+	Deck & operator=(Deck &&other) = delete;
+	~Deck() = default;
 private:
-  Deck();
+	Deck();
 
-  std::vector<Card> deck;
+	std::vector<Card> deck;
 };
 
 #endif

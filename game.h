@@ -9,27 +9,27 @@
 
 class Game {
 public:
-    Game();
-    
-    Game(Game&& other) noexcept;
-    Game& operator=(Game&& other) noexcept;
-    
-    Game(const Game&) = delete;
-    Game& operator=(const Game&) = delete;
+	Game();
 
-    void UpdateBalanceUI(QLabel* label);
-    std::shared_ptr<Player> GetPlayer() const {
-        return _player;
-    }
+	Game(Game&& other) noexcept;
+	Game& operator=(Game&& other) noexcept;
 
-    void InitTable(std::shared_ptr<QGraphicsScene> playerScene, QGraphicsView* playerGView,
-                   std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView);
+	Game(const Game&) = delete;
+	Game& operator=(const Game&) = delete;
+
+	void UpdateBalanceUI(QLabel* label);
+	std::shared_ptr<Player> GetPlayer() const {
+		return _player;
+	}
+
+	void InitTable(std::shared_ptr<QGraphicsScene> playerScene, QGraphicsView* playerGView,
+								 std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView);
 
 private:
-  Deck& _deck;
+	Deck& _deck;
 
-  std::shared_ptr<Player> _player;
-  std::unique_ptr<Player> _dealer;
+	std::shared_ptr<Player> _player;
+	std::unique_ptr<Player> _dealer;
 };
 
 #endif
