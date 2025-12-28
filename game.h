@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Player.h"
+#include "player.h"
 
 #include <QGraphicsPixmapItem>
 #include <QLabel>

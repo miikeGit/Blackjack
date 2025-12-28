@@ -58,4 +58,7 @@
         <file>textures/Back_4.png</file>
         <file>textures/Back_5.png</file>
     </qresource>
+    <qresource prefix="/fonts">
+        <file>fonts/balatro.otf</file>
+    </qresource>
 </RCC>

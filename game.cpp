@@ -21,10 +21,11 @@ Game& Game::operator=(Game&& other) noexcept {
         _dealer = std::move(other._dealer);
     }
     return *this;
+
 }
 
 void Game::UpdateBalanceUI(QLabel* label) {
-    label->setText("Balance: " + QString::number(_player->GetBalance()));
+	label->setText("$" + QString::number(_player->GetBalance()));
 }
 
 void Game::InitTable(std::shared_ptr<QGraphicsScene> playerScene, QGraphicsView* playerGView,
