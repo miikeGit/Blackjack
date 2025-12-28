@@ -15,16 +15,30 @@
   </property>
   <property name="styleSheet">
    <string notr="true">
-    QLabel { font-family: &quot;balatro&quot;; font-weight: bold; font-size: 20px; letter-spacing: 3px; }
+    QLabel { font-family: "balatro"; font-weight: bold; font-size: 20px; letter-spacing: 3px; }
     QPushButton {
-        background-color: #f15a24; color: white; font-family: &quot;balatro&quot;;
-        font-weight: bold; font-size: 20px; letter-spacing: 3px;
-        border: 3px solid #1e1e1e; border-radius: 10px; padding: 8px 16px;
-        border-bottom: 6px solid #9e3a18;
+        min-width: 120px;
+        min-height: 120px;
+        max-width: 120px;
+        max-height: 120px;
+        border-radius: 60px;
+        color: white;
+        font-family: "balatro";
+        font-weight: bold;
+        font-size: 30px;
+        border: 3px dashed #1e1e1e;
     }
     QPushButton:pressed { border-bottom: 2px solid #9e3a18; margin-top: 4px; }
+
+    QPushButton#bet5Button { background-color: #248ef1; border-bottom: 6px dashed #1761a6; }
+    QPushButton#bet10Button { background-color: #30bd20; border-bottom: 6px dashed #208215; }
+    QPushButton#bet25Button { background-color: #ed7d21; border-bottom: 6px dashed #ab5a18; }
+    QPushButton#bet50Button { background-color: #f01d1d; border-bottom: 6px dashed #850f0f; }
+    QPushButton#bet100Button { background-color: #9613c2; border-bottom: 6px dashed #5f0c7a; }
+
     QPushButton#standButton { background-color: #ef476f; border-bottom: 6px solid #a32a47; }
     QPushButton#hitButton { background-color: #118ab2; border-bottom: 6px solid #0a5d78; }
+
     #BetSize { font-size: 30px; }
    </string>
   </property>
