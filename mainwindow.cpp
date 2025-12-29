@@ -4,9 +4,7 @@
 
 #include <QGraphicsOpacityEffect>
 #include <QParallelAnimationGroup>
-#include <QGraphicsPixmapItem>
-#include <memory>
-#include <qrandom.h>
+#include <QRandomGenerator>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -22,15 +20,19 @@ MainWindow::MainWindow(QWidget *parent) :
 	_playerScene = std::make_shared<QGraphicsScene>(this);
 	_dealerScene = std::make_shared<QGraphicsScene>(this);
 
-	UpdateBalanceUI();
-	game.InitTable(_playerScene, ui->playerHand,
-								 _dealerScene, ui->dealerHand);
+	InitConnections();
+	UpdateUI();
 }
 
 MainWindow::~MainWindow() {}
 
-void MainWindow::on_hitButton_clicked() {
-	game.GetPlayer()->Hit(_playerScene, ui->playerHand);
+void MainWindow::InitConnections() {
+	connect(ui->bet5Button, &QPushButton::clicked, this, [this](){ HandleBet(5); });
+	connect(ui->bet10Button, &QPushButton::clicked, this, [this]{ HandleBet(10); });
+	connect(ui->bet25Button, &QPushButton::clicked, this, [this]{ HandleBet(25); });
+	connect(ui->bet50Button, &QPushButton::clicked, this, [this]{ HandleBet(50); });
+	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100); });
+	connect(ui->hitButton, &QPushButton::clicked, this, [this]{ game.GetPlayer()->Hit(_playerScene, ui->playerHand);});
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
@@ -39,35 +41,27 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 										(centralWidget()->height() - ui->BetSize->height()) / 2);
 }
 
-QPoint MainWindow::calculateRandomPosition() {
-	auto *random = QRandomGenerator::global();
-	int offsetLimit = 100;
-
-	int offsetX = random->bounded(-offsetLimit, offsetLimit);
-	int offsetY = random->bounded(-offsetLimit, offsetLimit);
-
-	int centerX = (centralWidget()->width() - 200) / 2;
-	int centerY = (centralWidget()->height() - 100) / 2;
-
-	return {centerX + offsetX, centerY + offsetY};
+QPoint MainWindow::calculateRandomOffset() {
+	return {QRandomGenerator::global()->bounded(-OFFST_RNG, OFFST_RNG),
+					QRandomGenerator::global()->bounded(-OFFST_RNG, OFFST_RNG)};
 }
 
-QPropertyAnimation* MainWindow::configureSizeAnimation(QPoint position, QLabel* label) {
-	QPropertyAnimation *sizeAnimation = new QPropertyAnimation(label, "geometry");
-	QRect targetRect(position.x(), position.y(), label->width(), label->height());
+QPropertyAnimation* MainWindow::createSizeAnimation(QPoint position, QLabel* label) {
+	auto *sizeAnimation = new QPropertyAnimation(label, "geometry");
+	QRect rect(position, label->size());
 
-	sizeAnimation->setDuration(500);
-	sizeAnimation->setStartValue(targetRect);
-	sizeAnimation->setKeyValueAt(0.5, targetRect.adjusted(-15, -20, 15, 20));
-	sizeAnimation->setEndValue(targetRect);
+	sizeAnimation->setDuration(SIZE_ANIMATION_DURATION);
+	sizeAnimation->setStartValue(rect);
+	sizeAnimation->setKeyValueAt(0.5, rect.adjusted(-15, -20, 15, 20));
+	sizeAnimation->setEndValue(rect);
 	sizeAnimation->setEasingCurve(QEasingCurve::OutBack);
 
 	return sizeAnimation;
 }
 
-QPropertyAnimation* MainWindow::configureShakeAnimation(QPoint position, QLabel* label) {
-	QPropertyAnimation *shakeAnimation = new QPropertyAnimation(label, "pos");
-	shakeAnimation->setDuration(200);
+QPropertyAnimation* MainWindow::createShakeAnimation(QPoint position, QLabel* label) {
+	auto *shakeAnimation = new QPropertyAnimation(label, "pos");
+	shakeAnimation->setDuration(SHAKE_ANIMATION_DURATION);
 	shakeAnimation->setLoopCount(2);
 	shakeAnimation->setKeyValueAt(0, position + QPoint(-7, 4));
 	shakeAnimation->setKeyValueAt(0.5, position + QPoint(3, -5));
@@ -76,97 +70,72 @@ QPropertyAnimation* MainWindow::configureShakeAnimation(QPoint position, QLabel*
 	return shakeAnimation;
 }
 
-QPropertyAnimation* MainWindow::configureFadeAnimation(QLabel* label) {
-	QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect(label);
+QPropertyAnimation* MainWindow::createFadeAnimation(QLabel* label) {
+	auto *opacityEffect = new QGraphicsOpacityEffect(label);
 	label->setGraphicsEffect(opacityEffect);
 
-	QPropertyAnimation *fadeAnimation = new QPropertyAnimation(opacityEffect, "opacity");
-	fadeAnimation->setDuration(500);
+	auto *fadeAnimation = new QPropertyAnimation(opacityEffect, "opacity");
+	fadeAnimation->setDuration(FADE_ANIMATION_DURATION);
 	fadeAnimation->setStartValue(1.0);
 	fadeAnimation->setEndValue(0.0);
 
 	return fadeAnimation;
 }
 
-void MainWindow::animateLabelPopup(QString text) {
-	QLabel *popupLabel = new QLabel(text, this);
+void MainWindow::AnimateLabelPopup(QString text) {
+	auto *popup = new QLabel(text, this);
 
-	QFont balatroFont("balatro");
-	balatroFont.setPixelSize(30);
-	balatroFont.setBold(true);
-	popupLabel->setFont(balatroFont);
-	popupLabel->setFixedSize(200, 100);
-	popupLabel->setAlignment(Qt::AlignCenter);
+	popup->setStyleSheet("font-family: 'balatro'; font-size: 30px; font-weight: bold;");
+	popup->setAttribute(Qt::WA_DeleteOnClose);
+	popup->setAlignment(Qt::AlignCenter);
 
-	QPoint randomPos = calculateRandomPosition();
-	popupLabel->move(randomPos);
+	popup->adjustSize();
 
-	QPropertyAnimation *size = configureSizeAnimation(randomPos, popupLabel);
-	QPropertyAnimation *shake = configureShakeAnimation(randomPos, popupLabel);
-	QPropertyAnimation *fade = configureFadeAnimation(popupLabel);
+	QPoint randomPos = centralWidget()->rect().center() + calculateRandomOffset() -
+										 QPoint(popup->width() / 2, popup->height() / 2);
+	popup->move(randomPos);
 
-	QPoint center = {(centralWidget()->width() - ui->BetSize->width()) / 2,
-									 (centralWidget()->height() - ui->BetSize->height()) / 2};
-	QPropertyAnimation *size2 = configureSizeAnimation(center, ui->BetSize);
-	QPropertyAnimation *shake2 = configureShakeAnimation(center, ui->BetSize);
+	auto *popupGroup = new QParallelAnimationGroup(popup);
+	popupGroup->addAnimation(createSizeAnimation(randomPos, popup));
+	popupGroup->addAnimation(createShakeAnimation(randomPos, popup));
+	popupGroup->addAnimation(createFadeAnimation(popup));
 
-	QParallelAnimationGroup *group = new QParallelAnimationGroup(popupLabel);
-	group->addAnimation(size);
-	group->addAnimation(shake);
-	group->addAnimation(fade);
+	connect(popupGroup, &QParallelAnimationGroup::finished, popup, &QLabel::deleteLater);
+	popup->show();
+	popupGroup->start(QAbstractAnimation::DeleteWhenStopped);
 
-	QParallelAnimationGroup *group2 = new QParallelAnimationGroup(ui->BetSize);
-	group2->addAnimation(size2);
-	group2->addAnimation(shake2);
+	ui->BetSize->adjustSize();
 
+	QPoint center(
+		centralWidget()->rect().center().x() - ui->BetSize->width() / 2,
+		centralWidget()->rect().center().y() - ui->BetSize->height() / 2
+	);
 
-	popupLabel->show();
-	group->start(QAbstractAnimation::DeleteWhenStopped);
-	group2->start(QAbstractAnimation::DeleteWhenStopped);
+	auto currentBetGroup = new QParallelAnimationGroup(ui->BetSize);
+	currentBetGroup->addAnimation(createSizeAnimation(center, ui->BetSize));
+	currentBetGroup->addAnimation(createShakeAnimation(center, ui->BetSize));
+	currentBetGroup->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void MainWindow::UpdateBalanceUI() {
+void MainWindow::UpdateUI() {
 	ui->balance->setText("$" + QString::number(game.GetBalance()));
 	ui->BetSize->setText(QString::number(game.GetCurrentBet()));
 
-	if (game.GetBalance() < 100) ui->bet100Button->setEnabled(false);
-	if (game.GetBalance() < 50) ui->bet50Button->setEnabled(false);
-	if (game.GetBalance() < 25) ui->bet25Button->setEnabled(false);
-	if (game.GetBalance() < 10) ui->bet10Button->setEnabled(false);
-	if (game.GetBalance() < 5) ui->bet5Button->setEnabled(false);
+	ui->bet100Button->setEnabled(game.GetBalance() >= 100);
+	ui->bet50Button->setEnabled(game.GetBalance() >= 50);
+	ui->bet25Button->setEnabled(game.GetBalance() >= 25);
+	ui->bet10Button->setEnabled(game.GetBalance() >= 10);
+	ui->bet5Button->setEnabled(game.GetBalance() >= 5);
+
+	if (game.GetBalance() < 5)
+		ui->balance->setStyleSheet("color: red;");
+	else
+		ui->balance->setStyleSheet("");
 }
 
-void MainWindow::on_bet5Button_clicked() {
-	game.SetBalance(game.GetBalance() - 5);
-	game.SetCurrentBet(game.GetCurrentBet() + 5);
-	UpdateBalanceUI();
-	animateLabelPopup("+ " + QString::number(5));
-}
-
-void MainWindow::on_bet10Button_clicked() {
-	game.SetBalance(game.GetBalance() - 10);
-	game.SetCurrentBet(game.GetCurrentBet() + 10);
-	UpdateBalanceUI();
-	animateLabelPopup("+ " + QString::number(10));
-}
-
-void MainWindow::on_bet25Button_clicked(){
-	game.SetBalance(game.GetBalance() - 25);
-	game.SetCurrentBet(game.GetCurrentBet() + 25);
-	UpdateBalanceUI();
-	animateLabelPopup("+ " + QString::number(25));
-}
-
-void MainWindow::on_bet50Button_clicked() {
-	game.SetBalance(game.GetBalance() - 50);
-	game.SetCurrentBet(game.GetCurrentBet() + 50);
-	UpdateBalanceUI();
-	animateLabelPopup("+ " + QString::number(50));
-}
-
-void MainWindow::on_bet100Button_clicked() {
-	game.SetBalance(game.GetBalance() - 100);
-	game.SetCurrentBet(game.GetCurrentBet() + 100);
-	UpdateBalanceUI();
-	animateLabelPopup("+ " + QString::number(100));
+void MainWindow::HandleBet(int amount) {
+	game.SetBalance(game.GetBalance() - amount);
+	game.SetCurrentBet(game.GetCurrentBet() + amount);
+	UpdateUI();
+	AnimateLabelPopup("+ " + QString::number(amount));
 }

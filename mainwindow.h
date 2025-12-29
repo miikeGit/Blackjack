@@ -4,8 +4,6 @@
 #include "game.h"
 
 #include <QMainWindow>
-#include <QGraphicsOpacityEffect>
-#include <QGraphicsPixmapItem>
 #include <QPropertyAnimation>
 
 QT_BEGIN_NAMESPACE
@@ -20,32 +18,31 @@ public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
+	static constexpr uint8_t OFFST_RNG = 100;
+	static constexpr uint8_t SHAKE_ANIMATION_DURATION = 200;
+	static constexpr uint16_t SIZE_ANIMATION_DURATION = 500;
+	static constexpr uint16_t FADE_ANIMATION_DURATION = 500;
+
+protected:
+	void resizeEvent(QResizeEvent* event);
+
 private:
-	Game game = Game();
+	Game game;
 
 	std::unique_ptr<Ui::MainWindow> ui;
 	std::shared_ptr<QGraphicsScene> _playerScene;
 	std::shared_ptr<QGraphicsScene> _dealerScene;
 
-	QGraphicsOpacityEffect *betOpacity;
+	QPoint calculateRandomOffset();
 
-	QPoint calculateRandomPosition();
+	QPropertyAnimation* createSizeAnimation(QPoint pos, QLabel* label);
+	QPropertyAnimation* createShakeAnimation(QPoint pos, QLabel* label);
+	QPropertyAnimation* createFadeAnimation(QLabel* label);
 
-	QPropertyAnimation* configureSizeAnimation(QPoint pos, QLabel* label);
-	QPropertyAnimation* configureShakeAnimation(QPoint pos, QLabel* label);
-	QPropertyAnimation* configureFadeAnimation(QLabel* label);
-
-	void animateLabelPopup(QString text);
-	void resizeEvent(QResizeEvent* event);
-	void UpdateBalanceUI();
-
-private slots:
-	void on_hitButton_clicked();
-	void on_bet5Button_clicked();
-	void on_bet10Button_clicked();
-	void on_bet25Button_clicked();
-	void on_bet50Button_clicked();
-	void on_bet100Button_clicked();
+	void HandleBet(int amount);
+	void AnimateLabelPopup(QString text);
+	void UpdateUI();
+	void InitConnections();
 };
 
 #endif
