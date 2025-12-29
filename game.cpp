@@ -4,7 +4,7 @@ Game::Game()
 	: _deck(Deck::GetDeck()),
 		_player(nullptr),
 		_dealer(nullptr),
-		_balance(10000),
+		_balance(1000),
 		_currentBet(0)
 {
 	_player = std::make_shared<Player>(_deck);

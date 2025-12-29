@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	ui->dealerHand->hide();
-	ui->playerHand->hide();
+	ui->dealerHandView->hide();
+	ui->playerHandView->hide();
 	ui->standButton->hide();
 	ui->hitButton->hide();
 
@@ -27,18 +27,23 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow() {}
 
 void MainWindow::InitConnections() {
-	connect(ui->bet5Button, &QPushButton::clicked, this, [this](){ HandleBet(5); });
-	connect(ui->bet10Button, &QPushButton::clicked, this, [this]{ HandleBet(10); });
-	connect(ui->bet25Button, &QPushButton::clicked, this, [this]{ HandleBet(25); });
-	connect(ui->bet50Button, &QPushButton::clicked, this, [this]{ HandleBet(50); });
+	connect(ui->bet5Button,	  &QPushButton::clicked, this, [this]{ HandleBet(5); });
+	connect(ui->bet10Button,  &QPushButton::clicked, this, [this]{ HandleBet(10); });
+	connect(ui->bet25Button,  &QPushButton::clicked, this, [this]{ HandleBet(25); });
+	connect(ui->bet50Button,  &QPushButton::clicked, this, [this]{ HandleBet(50); });
 	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100); });
-	connect(ui->hitButton, &QPushButton::clicked, this, [this]{ game.GetPlayer()->Hit(_playerScene, ui->playerHand);});
+	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ game.InitTable(_playerScene, ui->playerHandView,
+																																								_dealerScene, ui->dealerHandView);});
+	connect(ui->hitButton,    &QPushButton::clicked, this, [this]{ game.GetPlayer()->Hit(_playerScene, ui->playerHandView);});
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
 	QMainWindow::resizeEvent(event);
-	ui->BetSize->move((centralWidget()->width() - ui->BetSize->width()) / 2,
-										(centralWidget()->height() - ui->BetSize->height()) / 2);
+	ui->currentBetLabel->move((centralWidget()->width() - ui->currentBetLabel->width()) / 2,
+														(centralWidget()->height() - ui->currentBetLabel->height()) / 2);
+
+	ui->infoLabel->move((centralWidget()->width() - ui->infoLabel->width()) / 2,
+											(centralWidget()->height() - ui->infoLabel->height()) / 6);
 }
 
 QPoint MainWindow::calculateRandomOffset() {
@@ -104,22 +109,22 @@ void MainWindow::AnimateLabelPopup(QString text) {
 	popup->show();
 	popupGroup->start(QAbstractAnimation::DeleteWhenStopped);
 
-	ui->BetSize->adjustSize();
+	ui->currentBetLabel->adjustSize();
 
 	QPoint center(
-		centralWidget()->rect().center().x() - ui->BetSize->width() / 2,
-		centralWidget()->rect().center().y() - ui->BetSize->height() / 2
+		centralWidget()->rect().center().x() - ui->currentBetLabel->width() / 2,
+		centralWidget()->rect().center().y() - ui->currentBetLabel->height() / 2
 	);
 
-	auto currentBetGroup = new QParallelAnimationGroup(ui->BetSize);
-	currentBetGroup->addAnimation(createSizeAnimation(center, ui->BetSize));
-	currentBetGroup->addAnimation(createShakeAnimation(center, ui->BetSize));
+	auto currentBetGroup = new QParallelAnimationGroup(ui->currentBetLabel);
+	currentBetGroup->addAnimation(createSizeAnimation(center, ui->currentBetLabel));
+	currentBetGroup->addAnimation(createShakeAnimation(center, ui->currentBetLabel));
 	currentBetGroup->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void MainWindow::UpdateUI() {
-	ui->balance->setText("$" + QString::number(game.GetBalance()));
-	ui->BetSize->setText(QString::number(game.GetCurrentBet()));
+	ui->balanceLabel->setText("$" + QString::number(game.GetBalance()));
+	ui->currentBetLabel->setText(QString::number(game.GetCurrentBet()));
 
 	ui->bet100Button->setEnabled(game.GetBalance() >= 100);
 	ui->bet50Button->setEnabled(game.GetBalance() >= 50);
@@ -127,10 +132,15 @@ void MainWindow::UpdateUI() {
 	ui->bet10Button->setEnabled(game.GetBalance() >= 10);
 	ui->bet5Button->setEnabled(game.GetBalance() >= 5);
 
-	if (game.GetBalance() < 5)
-		ui->balance->setStyleSheet("color: red;");
-	else
-		ui->balance->setStyleSheet("");
+	if (game.GetBalance() < 5) {
+		ui->balanceLabel->setStyleSheet("color: red;");
+		ui->infoLabel->setText("ALL IN!");
+		ui->infoLabel->setStyleSheet("color : #ffc800;");
+	}
+	else {
+		ui->balanceLabel->setStyleSheet("");
+		ui->infoLabel->setText("Place your bet");
+	}
 }
 
 void MainWindow::HandleBet(int amount) {
