@@ -32,6 +32,8 @@ void Game::InitTable(std::shared_ptr<QGraphicsScene> playerScene, QGraphicsView*
 	_dealer->Hit(dealerScene, dealerGView, false);
 	_player->Hit(playerScene, playerGView, false);
 	_dealer->Hit(dealerScene, dealerGView, true);
+
+	_isDealerDone = false;
 }
 
 void Game::ClearTable() {
