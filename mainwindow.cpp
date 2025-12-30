@@ -5,6 +5,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QParallelAnimationGroup>
 #include <QRandomGenerator>
+#include <QGraphicsPixmapItem>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -37,18 +38,22 @@ void MainWindow::InitConnections() {
 	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu();		});
 
 	connect(ui->standButton,  &QPushButton::clicked, this, [this]{
-		game.InitDealer(_dealerScene, ui->dealerHandView);
-		auto [gameEnded, hasWon] = game.CheckIfEnded();
-		if (gameEnded) {
-			EndGame(hasWon);
+		game.MakeDealerPlay();
+		UpdateUI();
+		
+		GameState result = game.CheckIfEnded();
+		if (result != GameState::IN_PROGRESS) {
+			EndGame(result);
 		}
 	});
 
 	connect(ui->hitButton,    &QPushButton::clicked, this, [this]{
-		game.GetPlayer()->Hit(_playerScene, ui->playerHandView, false);
-		auto [gameEnded, hasWon] = game.CheckIfEnded();
-		if (gameEnded) {
-			EndGame(hasWon);
+		game.GetPlayer()->Hit(false);
+		UpdateUI();
+		
+		GameState result = game.CheckIfEnded();
+		if (result != GameState::IN_PROGRESS) {
+			EndGame(result);
 		}
 	});
 }
@@ -71,27 +76,38 @@ void MainWindow::InitGame() {
 
 	ui->balanceLabel->setText("Bet: " + QString::number(game.GetCurrentBet()));
 
-	game.InitTable(_playerScene, ui->playerHandView, _dealerScene, ui->dealerHandView);
-	auto [gameEnded, hasWon] = game.CheckIfEnded();
-	if (gameEnded) {
-		EndGame(hasWon);
+	game.InitTable();
+	UpdateUI();
+	
+	GameState result = game.CheckIfEnded();
+	if (result != GameState::IN_PROGRESS) {
+		EndGame(result);
 	}
 }
 
-void MainWindow::EndGame(bool hasWon) {
+void MainWindow::EndGame(GameState result) {
 	ui->standButton->hide();
 	ui->hitButton->hide();
 	ui->backButton->show();
 	ui->infoLabel->show();
 	ui->infoLabel->setStyleSheet("background-color: rgba(0, 0, 0, 100); color: #ffc800;");
-	if (hasWon) {
-		ui->infoLabel->setText("You win " + QString::number(game.GetCurrentBet()));
-	} else {
-		ui->infoLabel->setText("You lose");
+	
+	switch (result) {
+		case GameState::WIN:
+			ui->infoLabel->setText("You win " + QString::number(game.GetCurrentBet()));
+			break;
+		case GameState::LOSS:
+			ui->infoLabel->setText("You lose");
+			break;
+		default:
+			break;
 	}
+	UpdateUI();
 }
 
 void MainWindow::ReturnToMenu() {
+	game.ClearTable();
+	
 	ui->bet5Button->show();
 	ui->bet10Button->show();
 	ui->bet25Button->show();
@@ -219,8 +235,13 @@ void MainWindow::UpdateUI() {
 	}
 	else {
 		ui->balanceLabel->setStyleSheet("");
-		ui->infoLabel->setText("Place your bet");
+		if (ui->infoLabel->text() == "ALL IN!") {
+			ui->infoLabel->setText("Place your bet");
+		}
 	}
+	
+	RenderHand(game.GetPlayer()->GetHand(), _playerScene, ui->playerHandView);
+	RenderHand(game.GetDealer()->GetHand(), _dealerScene, ui->dealerHandView);
 }
 
 void MainWindow::HandleBet(int amount) {
@@ -228,4 +249,30 @@ void MainWindow::HandleBet(int amount) {
 	game.SetCurrentBet(game.GetCurrentBet() + amount);
 	UpdateUI();
 	AnimateLabelPopup("+ " + QString::number(amount));
+}
+
+QString MainWindow::CardToPath(const Card& card) {
+	if (card.isFaceDown) {
+		return ":images/textures/Back_1.png";
+	}
+
+	QString suitRank { QString::number(static_cast<int>(card.suit)) + "_"
+									 + QString::number(static_cast<int>(card.rank)) };
+
+	QString path { ":/images/textures/" + suitRank + ".png" };
+	return path;
+}
+
+void MainWindow::RenderHand(const std::vector<Card>& hand, std::shared_ptr<QGraphicsScene> scene, QGraphicsView* view) {
+	scene->clear();
+	uint32_t offset = 0;
+	for (const Card& card : hand) {
+		QPixmap pixmap(CardToPath(card));
+		QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
+		item->setScale(3);
+		item->setPos(offset, 0);
+
+		offset += 30;
+	}
+	view->setScene(scene.get());
 }

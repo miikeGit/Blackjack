@@ -3,42 +3,40 @@
 
 #include "player.h"
 
-#include <QGraphicsPixmapItem>
-#include <QLabel>
-#include <memory>
+enum class GameState {
+	IN_PROGRESS,
+	WIN,
+	LOSS
+};
 
 class Game {
 public:
 	Game();
 
-	Game(Game&& other) noexcept;
-	Game& operator=(Game&& other) noexcept;
-
-	Game(const Game&) = delete;
-	Game& operator=(const Game&) = delete;
-
-	void InitTable(std::shared_ptr<QGraphicsScene> playerScene, QGraphicsView* playerGView,
-								 std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView);
-
+	void InitTable();
 	void ClearTable();
 
 	std::shared_ptr<Player> GetPlayer() const { return _player; }
-	uint32_t GetBalance() const { return _balance; }
+	std::shared_ptr<Player> GetDealer() const { return _dealer; }
+	
+	uint32_t GetBalance()    const { return _balance;    }
 	uint32_t GetCurrentBet() const { return _currentBet; }
 
-	std::pair<bool, bool> CheckIfEnded();
+	GameState CheckIfEnded();
 
 	void SetBalance(uint32_t newBalance);
 	void SetCurrentBet(uint32_t newBet);
-	void InitDealer(std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView);
-private:
-	Deck& _deck;
+	void MakeDealerPlay();
 
-	bool _isDealerDone = false;
+private:
 	uint32_t _balance;
 	uint32_t _currentBet;
+
+	bool _isDealerDone = false;
+
+	std::shared_ptr<Deck> _deck;
 	std::shared_ptr<Player> _player;
-	std::unique_ptr<Player> _dealer;
+	std::shared_ptr<Player> _dealer;
 };
 
 #endif

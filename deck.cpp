@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <stdexcept>
-#include <QRandomGenerator64>
+#include <QRandomGenerator>
 
 Deck::Deck() {
 	deck.reserve(52);

@@ -14,24 +14,13 @@ struct Card {
 
 class Deck {
 public:
+	Deck();
 	void Shuffle();
 	Card Pop();
 	void Reset();
 
-	static Deck& GetDeck() {
-		static Deck deck;
-		return deck;
-	}
-
-	Deck(const Deck &other) = delete;
-	Deck(Deck &&other) = delete;
-
-	Deck & operator=(const Deck &other) = delete;
-	Deck & operator=(Deck &&other) = delete;
 	~Deck() = default;
 private:
-	Deck();
-
 	std::vector<Card> deck;
 };
 

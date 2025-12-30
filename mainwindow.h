@@ -5,6 +5,8 @@
 
 #include <QMainWindow>
 #include <QPropertyAnimation>
+#include <QGraphicsView>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,17 +37,20 @@ private:
 
 	QPoint calculateRandomOffset();
 
+	QPropertyAnimation* createFadeAnimation(QLabel* label);
 	QPropertyAnimation* createSizeAnimation(QPoint pos, QLabel* label);
 	QPropertyAnimation* createShakeAnimation(QPoint pos, QLabel* label);
-	QPropertyAnimation* createFadeAnimation(QLabel* label);
 
-	void HandleBet(int amount);
-	void AnimateLabelPopup(QString text);
-	void UpdateUI();
-	void InitConnections();
 	void InitGame();
-	void EndGame(bool hasWon);
+	void UpdateUI();
 	void ReturnToMenu();
+	void InitConnections();
+	void HandleBet(int amount);
+	void EndGame(GameState result);
+	void AnimateLabelPopup(QString text);
+
+	QString CardToPath(const Card& card);
+	void RenderHand(const std::vector<Card>& hand, std::shared_ptr<QGraphicsScene> scene, QGraphicsView* view);
 };
 
 #endif

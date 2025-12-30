@@ -1,37 +1,21 @@
 #include "game.h"
 
 Game::Game()
-	: _deck(Deck::GetDeck()),
+	: _deck(std::make_shared<Deck>()),
 		_player(nullptr),
 		_dealer(nullptr),
 		_balance(1000),
 		_currentBet(0)
 {
 	_player = std::make_shared<Player>(_deck);
-	_dealer = std::make_unique<Player>(_deck);
+	_dealer = std::make_shared<Player>(_deck);
 }
 
-Game::Game(Game&& other) noexcept
-	: _deck(other._deck),
-		_player(std::move(other._player)),
-		_dealer(std::move(other._dealer))
-{}
-
-Game& Game::operator=(Game&& other) noexcept {
-	if (this != &other) {
-			_player = std::move(other._player);
-			_dealer = std::move(other._dealer);
-		}
-	return *this;
-
-}
-
-void Game::InitTable(std::shared_ptr<QGraphicsScene> playerScene, QGraphicsView* playerGView,
-										 std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView) {
-	_player->Hit(playerScene, playerGView, false);
-	_dealer->Hit(dealerScene, dealerGView, false);
-	_player->Hit(playerScene, playerGView, false);
-	_dealer->Hit(dealerScene, dealerGView, true);
+void Game::InitTable() {
+	_player->Hit(false);
+	_dealer->Hit(false);
+	_player->Hit(false);
+	_dealer->Hit(true);
 
 	_isDealerDone = false;
 }
@@ -39,7 +23,7 @@ void Game::InitTable(std::shared_ptr<QGraphicsScene> playerScene, QGraphicsView*
 void Game::ClearTable() {
 	_player->GetHand().clear();
 	_dealer->GetHand().clear();
-	_deck.Reset();
+	_deck->Reset();
 }
 
 void Game::SetBalance(uint32_t newBalance) {
@@ -50,46 +34,39 @@ void Game::SetCurrentBet(uint32_t newBet) {
 	_currentBet = newBet;
 }
 
-std::pair<bool, bool> Game::CheckIfEnded() {
+GameState Game::CheckIfEnded() {
 	uint8_t playerValue = _player->GetHandValue();
 	uint8_t dealerValue = _dealer->GetHandValue();
 
-	if (playerValue > 21) { // Loss
-		ClearTable();
-		return {true, false};
+	if (playerValue > 21) {
+		return GameState::LOSS;
 	}
 
 	if (_isDealerDone) {
-		if (dealerValue > 21) { // Win
+		if (dealerValue > 21) {
 			_currentBet *= 2;
 			_balance += _currentBet;
-			ClearTable();
-			return {true, true};
+			return GameState::WIN;
 		}
 
-		if (dealerValue > playerValue) { // Loss
-			ClearTable();
-			return {true, false};
+		if (dealerValue > playerValue) {
+			return GameState::LOSS;
 		}
-		else if (playerValue >= dealerValue) { // Win
+		else if (playerValue >= dealerValue) {
 			_currentBet *= 2;
 			_balance += _currentBet;
-			ClearTable();
-			return {true, true};
+			return GameState::WIN;
 		}
 	}
 
-	// Continue
-	return {false, false};
+	return GameState::IN_PROGRESS;
 }
 
-void Game::InitDealer(std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView) {
-	// flip facedown card
+void Game::MakeDealerPlay() {
 	_dealer->GetHand().back().isFaceDown = false;
-	_dealer->DrawHand(dealerScene, dealerGView);
 
 	while (_dealer->GetHandValue() < 17) {
-		_dealer->Hit(dealerScene, dealerGView, false);
+		_dealer->Hit(false);
 	}
 
 	_isDealerDone = true;

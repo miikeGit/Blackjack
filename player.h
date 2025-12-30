@@ -5,28 +5,19 @@
 
 #include <cstdint>
 #include <memory>
-#include <QGraphicsPixmapItem>
-#include <QGraphicsView>
 
 class Player {
 public:
-	explicit Player(Deck& deck);
-	uint8_t GetHandValue() const;
+	explicit Player(std::shared_ptr<Deck> deck);
 
+	uint8_t GetHandValue() const;
 	std::vector<Card>& GetHand();
 
-	void Hit(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView, bool isFaceDown);
+	void Hit(bool isFaceDown);
 
-	Player(Player& other);
-	Player(Player&& other);
-
-	Player operator=(Player& other);
-	Player& operator=(Player&& other);
-	~Player() = default;
-	void DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
 private:
-	std::vector<Card> hand;
-	Deck& deck = Deck::GetDeck();
+	std::vector<Card> _hand;
+	std::shared_ptr<Deck> _deck;
 };
 
 #endif
