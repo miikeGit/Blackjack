@@ -269,10 +269,11 @@ void MainWindow::RenderHand(const std::vector<Card>& hand, std::shared_ptr<QGrap
 	for (const Card& card : hand) {
 		QPixmap pixmap(CardToPath(card));
 		QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
-		item->setScale(3);
 		item->setPos(offset, 0);
+		item->setScale(3);
 
 		offset += 30;
 	}
+	scene->setSceneRect(scene->itemsBoundingRect());
 	view->setScene(scene.get());
 }
