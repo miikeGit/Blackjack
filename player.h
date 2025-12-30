@@ -23,8 +23,8 @@ public:
 	Player operator=(Player& other);
 	Player& operator=(Player&& other);
 	~Player() = default;
-private:
 	void DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
+private:
 	std::vector<Card> hand;
 	Deck& deck = Deck::GetDeck();
 };

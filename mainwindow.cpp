@@ -35,7 +35,15 @@ void MainWindow::InitConnections() {
 	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100);		});
 	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();				});
 	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu();		});
-	connect(ui->standButton,  &QPushButton::clicked, this, [this]{ game.InitDealer(); });
+
+	connect(ui->standButton,  &QPushButton::clicked, this, [this]{
+		game.InitDealer(_dealerScene, ui->dealerHandView);
+		auto [gameEnded, hasWon] = game.CheckIfEnded();
+		if (gameEnded) {
+			EndGame(hasWon);
+		}
+	});
+
 	connect(ui->hitButton,    &QPushButton::clicked, this, [this]{
 		game.GetPlayer()->Hit(_playerScene, ui->playerHandView, false);
 		auto [gameEnded, hasWon] = game.CheckIfEnded();

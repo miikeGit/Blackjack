@@ -30,10 +30,11 @@ public:
 
 	void SetBalance(uint32_t newBalance);
 	void SetCurrentBet(uint32_t newBet);
-	void InitDealer();
+	void InitDealer(std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView);
 private:
 	Deck& _deck;
 
+	bool _isDealerDone = false;
 	uint32_t _balance;
 	uint32_t _currentBet;
 	std::shared_ptr<Player> _player;

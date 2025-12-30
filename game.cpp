@@ -49,21 +49,46 @@ void Game::SetCurrentBet(uint32_t newBet) {
 }
 
 std::pair<bool, bool> Game::CheckIfEnded() {
-	uint8_t value = _player->GetHandValue();
+	uint8_t playerValue = _player->GetHandValue();
+	uint8_t dealerValue = _dealer->GetHandValue();
 
-	if (value == 21) { // WIN
-		_currentBet *= 2;
-		_balance += _currentBet;
-		ClearTable();
-		return {true, true};
-	} else if (value > 21) { // LOSE
+	if (playerValue > 21) { // Loss
 		ClearTable();
 		return {true, false};
-	} else { // CONTINUE
-		return {false, false};
 	}
+
+	if (_isDealerDone) {
+		if (dealerValue > 21) { // Win
+			_currentBet *= 2;
+			_balance += _currentBet;
+			ClearTable();
+			return {true, true};
+		}
+
+		if (dealerValue > playerValue) { // Loss
+			ClearTable();
+			return {true, false};
+		}
+		else if (playerValue >= dealerValue) { // Win
+			_currentBet *= 2;
+			_balance += _currentBet;
+			ClearTable();
+			return {true, true};
+		}
+	}
+
+	// Continue
+	return {false, false};
 }
 
-void Game::InitDealer() {
+void Game::InitDealer(std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView) {
+	// flip facedown card
 	_dealer->GetHand().back().isFaceDown = false;
+	_dealer->DrawHand(dealerScene, dealerGView);
+
+	while (_dealer->GetHandValue() < 17) {
+		_dealer->Hit(dealerScene, dealerGView, false);
+	}
+
+	_isDealerDone = true;
 }
