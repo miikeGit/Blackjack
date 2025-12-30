@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->playerHandView->hide();
 	ui->standButton->hide();
 	ui->hitButton->hide();
+	ui->backButton->hide();
 
 	_playerScene = std::make_shared<QGraphicsScene>(this);
 	_dealerScene = std::make_shared<QGraphicsScene>(this);
@@ -27,14 +28,84 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow() {}
 
 void MainWindow::InitConnections() {
-	connect(ui->bet5Button,	  &QPushButton::clicked, this, [this]{ HandleBet(5); });
-	connect(ui->bet10Button,  &QPushButton::clicked, this, [this]{ HandleBet(10); });
-	connect(ui->bet25Button,  &QPushButton::clicked, this, [this]{ HandleBet(25); });
-	connect(ui->bet50Button,  &QPushButton::clicked, this, [this]{ HandleBet(50); });
-	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100); });
-	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ game.InitTable(_playerScene, ui->playerHandView,
-																																								_dealerScene, ui->dealerHandView);});
-	connect(ui->hitButton,    &QPushButton::clicked, this, [this]{ game.GetPlayer()->Hit(_playerScene, ui->playerHandView);});
+	connect(ui->bet5Button,	  &QPushButton::clicked, this, [this]{ HandleBet(5);			});
+	connect(ui->bet10Button,  &QPushButton::clicked, this, [this]{ HandleBet(10);			});
+	connect(ui->bet25Button,  &QPushButton::clicked, this, [this]{ HandleBet(25);			});
+	connect(ui->bet50Button,  &QPushButton::clicked, this, [this]{ HandleBet(50);			});
+	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100);		});
+	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();				});
+	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu();		});
+	connect(ui->standButton,  &QPushButton::clicked, this, [this]{ game.InitDealer(); });
+	connect(ui->hitButton,    &QPushButton::clicked, this, [this]{
+		game.GetPlayer()->Hit(_playerScene, ui->playerHandView, false);
+		auto [gameEnded, hasWon] = game.CheckIfEnded();
+		if (gameEnded) {
+			EndGame(hasWon);
+		}
+	});
+}
+
+void MainWindow::InitGame() {
+	ui->bet5Button->hide();
+	ui->bet10Button->hide();
+	ui->bet25Button->hide();
+	ui->bet50Button->hide();
+	ui->bet100Button->hide();
+	ui->startButton->hide();
+	ui->infoLabel->hide();
+	ui->currentBetLabel->hide();
+
+	ui->standButton->show();
+	ui->hitButton->show();
+
+	ui->playerHandView->show();
+	ui->dealerHandView->show();
+
+	ui->balanceLabel->setText("Bet: " + QString::number(game.GetCurrentBet()));
+
+	game.InitTable(_playerScene, ui->playerHandView, _dealerScene, ui->dealerHandView);
+	auto [gameEnded, hasWon] = game.CheckIfEnded();
+	if (gameEnded) {
+		EndGame(hasWon);
+	}
+}
+
+void MainWindow::EndGame(bool hasWon) {
+	ui->standButton->hide();
+	ui->hitButton->hide();
+	ui->backButton->show();
+	ui->infoLabel->show();
+	ui->infoLabel->setStyleSheet("background-color: rgba(0, 0, 0, 100); color: #ffc800;");
+	if (hasWon) {
+		ui->infoLabel->setText("You win " + QString::number(game.GetCurrentBet()));
+	} else {
+		ui->infoLabel->setText("You lose");
+	}
+}
+
+void MainWindow::ReturnToMenu() {
+	ui->bet5Button->show();
+	ui->bet10Button->show();
+	ui->bet25Button->show();
+	ui->bet50Button->show();
+	ui->bet100Button->show();
+	ui->startButton->show();
+	ui->backButton->hide();
+
+	_playerScene->clear();
+	ui->playerHandView->hide();
+	_dealerScene->clear();
+	ui->dealerHandView->hide();
+
+	ui->startButton->setEnabled(false);
+
+	ui->currentBetLabel->show();
+	ui->currentBetLabel->setNum(0);
+	ui->infoLabel->setText("Place your bet");
+	ui->infoLabel->setStyleSheet("");
+	ui->balanceLabel->setText("$ " + QString::number(game.GetBalance()));
+
+	game.SetCurrentBet(0);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
@@ -116,7 +187,7 @@ void MainWindow::AnimateLabelPopup(QString text) {
 		centralWidget()->rect().center().y() - ui->currentBetLabel->height() / 2
 	);
 
-	auto currentBetGroup = new QParallelAnimationGroup(ui->currentBetLabel);
+	auto *currentBetGroup = new QParallelAnimationGroup(ui->currentBetLabel);
 	currentBetGroup->addAnimation(createSizeAnimation(center, ui->currentBetLabel));
 	currentBetGroup->addAnimation(createShakeAnimation(center, ui->currentBetLabel));
 	currentBetGroup->start(QAbstractAnimation::DeleteWhenStopped);
@@ -126,6 +197,7 @@ void MainWindow::UpdateUI() {
 	ui->balanceLabel->setText("$" + QString::number(game.GetBalance()));
 	ui->currentBetLabel->setText(QString::number(game.GetCurrentBet()));
 
+	ui->startButton->setEnabled(game.GetCurrentBet() > 0);
 	ui->bet100Button->setEnabled(game.GetBalance() >= 100);
 	ui->bet50Button->setEnabled(game.GetBalance() >= 50);
 	ui->bet25Button->setEnabled(game.GetBalance() >= 25);

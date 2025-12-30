@@ -20,12 +20,17 @@ public:
 	void InitTable(std::shared_ptr<QGraphicsScene> playerScene, QGraphicsView* playerGView,
 								 std::shared_ptr<QGraphicsScene> dealerScene, QGraphicsView* dealerGView);
 
+	void ClearTable();
+
 	std::shared_ptr<Player> GetPlayer() const { return _player; }
 	uint32_t GetBalance() const { return _balance; }
 	uint32_t GetCurrentBet() const { return _currentBet; }
 
+	std::pair<bool, bool> CheckIfEnded();
+
 	void SetBalance(uint32_t newBalance);
 	void SetCurrentBet(uint32_t newBet);
+	void InitDealer();
 private:
 	Deck& _deck;
 

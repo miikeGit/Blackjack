@@ -11,10 +11,11 @@
 class Player {
 public:
 	explicit Player(Deck& deck);
+	uint8_t GetHandValue() const;
 
-	uint32_t GetBalance() const;
+	std::vector<Card>& GetHand();
 
-	void Hit(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
+	void Hit(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView, bool isFaceDown);
 
 	Player(Player& other);
 	Player(Player&& other);
@@ -24,7 +25,6 @@ public:
 	~Player() = default;
 private:
 	void DrawHand(std::shared_ptr<QGraphicsScene> scene, QGraphicsView* gView);
-	uint8_t handValue;
 	std::vector<Card> hand;
 	Deck& deck = Deck::GetDeck();
 };

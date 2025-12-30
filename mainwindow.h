@@ -43,6 +43,9 @@ private:
 	void AnimateLabelPopup(QString text);
 	void UpdateUI();
 	void InitConnections();
+	void InitGame();
+	void EndGame(bool hasWon);
+	void ReturnToMenu();
 };
 
 #endif
