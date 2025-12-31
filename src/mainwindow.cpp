@@ -263,13 +263,13 @@ void MainWindow::HandleBet(int amount) {
 
 QString MainWindow::CardToPath(const Card& card) {
 	if (card.isFaceDown) {
-		return ":images/textures/Back_1.png";
+		return ":/textures/Back_1.png";
 	}
 
 	QString suitRank { QString::number(static_cast<int>(card.suit)) + "_"
 									 + QString::number(static_cast<int>(card.rank)) };
 
-	QString path { ":/images/textures/" + suitRank + ".png" };
+	QString path { ":/textures/" + suitRank + ".png" };
 	return path;
 }
 

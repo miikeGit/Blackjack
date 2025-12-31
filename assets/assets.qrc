@@ -1,6 +1,15 @@
 <RCC>
-    <qresource prefix="/images">
+    <qresource prefix="/">
+        <file>sfx/background.mp3</file>
+        <file>sfx/betUp.wav</file>
+        <file>sfx/button.wav</file>
+        <file>sfx/card.wav</file>
+        <file>fonts/balatro.otf</file>
         <file>textures/1_1.png</file>
+        <file>textures/1_10.png</file>
+        <file>textures/1_11.png</file>
+        <file>textures/1_12.png</file>
+        <file>textures/1_13.png</file>
         <file>textures/1_2.png</file>
         <file>textures/1_3.png</file>
         <file>textures/1_4.png</file>
@@ -9,11 +18,11 @@
         <file>textures/1_7.png</file>
         <file>textures/1_8.png</file>
         <file>textures/1_9.png</file>
-        <file>textures/1_10.png</file>
-        <file>textures/1_11.png</file>
-        <file>textures/1_12.png</file>
-        <file>textures/1_13.png</file>
         <file>textures/2_1.png</file>
+        <file>textures/2_10.png</file>
+        <file>textures/2_11.png</file>
+        <file>textures/2_12.png</file>
+        <file>textures/2_13.png</file>
         <file>textures/2_2.png</file>
         <file>textures/2_3.png</file>
         <file>textures/2_4.png</file>
@@ -22,11 +31,11 @@
         <file>textures/2_7.png</file>
         <file>textures/2_8.png</file>
         <file>textures/2_9.png</file>
-        <file>textures/2_10.png</file>
-        <file>textures/2_11.png</file>
-        <file>textures/2_12.png</file>
-        <file>textures/2_13.png</file>
         <file>textures/3_1.png</file>
+        <file>textures/3_10.png</file>
+        <file>textures/3_11.png</file>
+        <file>textures/3_12.png</file>
+        <file>textures/3_13.png</file>
         <file>textures/3_2.png</file>
         <file>textures/3_3.png</file>
         <file>textures/3_4.png</file>
@@ -35,11 +44,11 @@
         <file>textures/3_7.png</file>
         <file>textures/3_8.png</file>
         <file>textures/3_9.png</file>
-        <file>textures/3_10.png</file>
-        <file>textures/3_11.png</file>
-        <file>textures/3_12.png</file>
-        <file>textures/3_13.png</file>
         <file>textures/4_1.png</file>
+        <file>textures/4_10.png</file>
+        <file>textures/4_11.png</file>
+        <file>textures/4_12.png</file>
+        <file>textures/4_13.png</file>
         <file>textures/4_2.png</file>
         <file>textures/4_3.png</file>
         <file>textures/4_4.png</file>
@@ -48,24 +57,11 @@
         <file>textures/4_7.png</file>
         <file>textures/4_8.png</file>
         <file>textures/4_9.png</file>
-        <file>textures/4_10.png</file>
-        <file>textures/4_11.png</file>
-        <file>textures/4_12.png</file>
-        <file>textures/4_13.png</file>
         <file>textures/Back_1.png</file>
         <file>textures/Back_2.png</file>
         <file>textures/Back_3.png</file>
         <file>textures/Back_4.png</file>
         <file>textures/Back_5.png</file>
         <file>textures/background.png</file>
-    </qresource>
-    <qresource prefix="/fonts">
-        <file>fonts/balatro.otf</file>
-    </qresource>
-    <qresource prefix="/">
-        <file>sfx/background.mp3</file>
-        <file>sfx/betUp.wav</file>
-        <file>sfx/button.wav</file>
-        <file>sfx/card.wav</file>
     </qresource>
 </RCC>

@@ -4,7 +4,7 @@
 #include <QFontDatabase>
 
 void LoadFont() {
-	QFontDatabase::addApplicationFont(":/fonts/fonts/balatro.otf");
+	QFontDatabase::addApplicationFont(":/fonts/balatro.otf");
 }
 
 int main(int argc, char *argv[]) {

@@ -5,64 +5,39 @@ project(QTBlackjack VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Multimedia)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Multimedia)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Multimedia)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        src/main.cpp
+        src/deck.cpp
+        src/game.cpp
+        src/player.cpp
+        src/mainwindow.cpp
+        src/sfxmanager.cpp
+
+        include/deck.h
+        include/game.h
+        include/player.h
+        include/mainwindow.h
+        include/sfxmanager.h
+        include/AnimatedCard.h
+
+        assets/assets.qrc
+
+        ui/mainwindow.ui
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(QTBlackjack
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        deck.cpp player.cpp
-        deck.h player.h
-        assets.qrc
-        game.h game.cpp
-        AnimatedCard.h
-        sfxmanager.h sfxmanager.cpp
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET QTBlackjack APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(QTBlackjack SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(QTBlackjack
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PROJECT_SOURCES})
 
-target_link_libraries(QTBlackjack PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE Qt6::Multimedia)
+qt_add_executable(QTBlackjack MANUAL_FINALIZATION ${PROJECT_SOURCES})
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.QTBlackjack)
-endif()
-set_target_properties(QTBlackjack PROPERTIES
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
+target_include_directories(QTBlackjack PRIVATE include)
+target_link_libraries(QTBlackjack PRIVATE Qt6::Widgets Qt6::Multimedia)
+set_target_properties(QTBlackjack PROPERTIES WIN32_EXECUTABLE TRUE)
 
 include(GNUInstallDirs)
 install(TARGETS QTBlackjack
@@ -71,6 +46,4 @@ install(TARGETS QTBlackjack
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(QTBlackjack)
-endif()
+qt_finalize_executable(QTBlackjack)
