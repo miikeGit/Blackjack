@@ -61,4 +61,7 @@
     <qresource prefix="/fonts">
         <file>fonts/balatro.otf</file>
     </qresource>
+    <qresource prefix="/">
+        <file>sfx/background.mp3</file>
+    </qresource>
 </RCC>

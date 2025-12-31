@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "game.h"
+#include "sfxmanager.h"
 
 #include <QMainWindow>
 #include <QPropertyAnimation>
@@ -33,6 +34,7 @@ protected:
 
 private:
 	Game game;
+	SFXManager sfx;
 
 	std::unique_ptr<Ui::MainWindow> ui;
 	std::shared_ptr<QGraphicsScene> _playerScene;
