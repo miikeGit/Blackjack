@@ -238,11 +238,7 @@ void MainWindow::AnimateLabelPopup(QString text) {
 }
 
 void MainWindow::UpdateUI() {
-	if (ui->hitButton->isVisible() || ui->backButton->isVisible()) {
-		ui->balanceLabel->setText("Bet: " + QString::number(game.GetCurrentBet()));}
-	else {
-		ui->balanceLabel->setText("$ " + QString::number(game.GetBalance()));
-	}
+	ui->balanceLabel->setText("$ " + QString::number(game.GetBalance()));
 
 	ui->currentBetLabel->setText(QString::number(game.GetCurrentBet()));
 
