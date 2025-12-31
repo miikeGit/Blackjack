@@ -27,7 +27,7 @@ public:
 	static constexpr uint8_t SHAKE_ANIMATION_DURATION = 200;
 	static constexpr uint16_t SIZE_ANIMATION_DURATION = 500;
 	static constexpr uint16_t FADE_ANIMATION_DURATION = 500;
-	static constexpr uint16_t SLIDE_ANIMATION_DURATION = 500;
+	static constexpr uint16_t SLIDE_ANIMATION_DURATION = 300;
 
 protected:
 	void resizeEvent(QResizeEvent* event);

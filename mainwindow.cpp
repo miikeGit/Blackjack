@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(std::make_unique<Ui::MainWindow>())
 {
 	ui->setupUi(this);
-
 	ui->dealerHandView->hide();
 	ui->playerHandView->hide();
 	ui->standButton->hide();
@@ -36,12 +35,14 @@ void MainWindow::InitConnections() {
 	connect(ui->bet25Button,  &QPushButton::clicked, this, [this]{ HandleBet(25);	 });
 	connect(ui->bet50Button,  &QPushButton::clicked, this, [this]{ HandleBet(50);	 });
 	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100); });
-	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();		 });
-	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu(); });
+
+	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();  });
+	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu(); sfx.button->play(); });
 
 	connect(ui->standButton,  &QPushButton::clicked, this, [this]{
 		ui->standButton->hide();
 		ui->hitButton->hide();
+
 		game.SetDealersTurn(true);
 		game.RevealDealersCard();
 		UpdateUI();
@@ -50,6 +51,7 @@ void MainWindow::InitConnections() {
 
 	connect(ui->hitButton,    &QPushButton::clicked, this, [this]{
 		game.GetPlayer()->Hit(false);
+
 		UpdateUI();
 
 		GameState result = game.GetCurrentState();
@@ -74,8 +76,6 @@ void MainWindow::InitGame() {
 
 	ui->playerHandView->show();
 	ui->dealerHandView->show();
-
-	ui->balanceLabel->setText("Bet: " + QString::number(game.GetCurrentBet()));
 
 	game.InitTable();
 	UpdateUI();
@@ -136,8 +136,6 @@ void MainWindow::ReturnToMenu() {
 		ui->infoLabel->setText("Place your bet");
 		ui->infoLabel->setStyleSheet("");
 	}
-
-	ui->balanceLabel->setText("$ " + QString::number(game.GetBalance()));
 
 	game.SetCurrentBet(0);
 }
@@ -240,7 +238,12 @@ void MainWindow::AnimateLabelPopup(QString text) {
 }
 
 void MainWindow::UpdateUI() {
-	ui->balanceLabel->setText("$" + QString::number(game.GetBalance()));
+	if (ui->hitButton->isVisible() || ui->backButton->isVisible()) {
+		ui->balanceLabel->setText("Bet: " + QString::number(game.GetCurrentBet()));}
+	else {
+		ui->balanceLabel->setText("$ " + QString::number(game.GetBalance()));
+	}
+
 	ui->currentBetLabel->setText(QString::number(game.GetCurrentBet()));
 
 	ui->startButton->setEnabled(game.GetCurrentBet() > 0);
@@ -258,6 +261,7 @@ void MainWindow::HandleBet(int amount) {
 	game.SetBalance(game.GetBalance() - amount);
 	game.SetCurrentBet(game.GetCurrentBet() + amount);
 	UpdateUI();
+	sfx.betUp->play();
 	AnimateLabelPopup("+ " + QString::number(amount));
 }
 
@@ -296,6 +300,7 @@ void MainWindow::RenderHand(const std::vector<Card>& hand, std::shared_ptr<QGrap
 				&& ( (game.IsDealersTurn() && scene == _dealerScene && hand.size() > 2)
 				|| (!game.IsDealersTurn() && scene == _playerScene) ) )
 		{
+			sfx.card->play();
 			QPropertyAnimation* slideAnimation = new QPropertyAnimation(aCard, "pos");
 			slideAnimation->setDuration(SLIDE_ANIMATION_DURATION);
 			slideAnimation->setStartValue(QPoint(view->width() + 100, yPos));

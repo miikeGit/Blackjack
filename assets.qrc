@@ -57,11 +57,15 @@
         <file>textures/Back_3.png</file>
         <file>textures/Back_4.png</file>
         <file>textures/Back_5.png</file>
+        <file>textures/background.png</file>
     </qresource>
     <qresource prefix="/fonts">
         <file>fonts/balatro.otf</file>
     </qresource>
     <qresource prefix="/">
         <file>sfx/background.mp3</file>
+        <file>sfx/betUp.wav</file>
+        <file>sfx/button.wav</file>
+        <file>sfx/card.wav</file>
     </qresource>
 </RCC>
