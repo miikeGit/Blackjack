@@ -3,12 +3,13 @@
 
 #include "deck.h"
 
-#include <cstdint>
 #include <memory>
 
 class Player {
 public:
 	explicit Player(std::shared_ptr<Deck> deck);
+
+	static constexpr uint8_t MAX_HAND_SIZE = 11;
 
 	uint8_t GetHandValue() const;
 	std::vector<Card>& GetHand();

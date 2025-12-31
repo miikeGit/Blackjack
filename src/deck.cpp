@@ -5,7 +5,7 @@
 #include <QRandomGenerator>
 
 Deck::Deck() {
-	deck.reserve(52);
+	deck.reserve(DECK_SIZE);
 	Reset();
 }
 

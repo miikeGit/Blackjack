@@ -2,14 +2,11 @@
 
 Game::Game()
 	: _deck(std::make_shared<Deck>()),
-		_player(nullptr),
-		_dealer(nullptr),
-		_balance(1000),
+		_player(std::make_shared<Player>(_deck)),
+		_dealer(std::make_shared<Player>(_deck)),
+		_balance(INITIAL_BALANCE),
 		_currentBet(0)
-{
-	_player = std::make_shared<Player>(_deck);
-	_dealer = std::make_shared<Player>(_deck);
-}
+{}
 
 void Game::InitTable() {
 	_player->Hit(false);
@@ -46,19 +43,14 @@ GameState Game::GetCurrentState() {
 	}
 
 	if (_isDealersTurn) {
-		if (dealerValue > 21) {
-			return GameState::WIN;
-		}
-
 		if (dealerValue < 17) {
 			return GameState::IN_PROGRESS;
 		}
 
-		if (dealerValue > playerValue) {
-			return GameState::LOSS;
-		}
-		else if (playerValue >= dealerValue) {
+		if (dealerValue > 21 || playerValue >= dealerValue) {
 			return GameState::WIN;
+		} else {
+			return GameState::LOSS;
 		}
 	}
 

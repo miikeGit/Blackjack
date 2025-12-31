@@ -3,14 +3,9 @@
 #include <QApplication>
 #include <QFontDatabase>
 
-void LoadFont() {
-	QFontDatabase::addApplicationFont(":/fonts/balatro.otf");
-}
-
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
-
-	LoadFont();
+	QFontDatabase::addApplicationFont(":/fonts/balatro.otf");
 
 	MainWindow w;
 	w.show();

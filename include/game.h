@@ -13,15 +13,17 @@ class Game {
 public:
 	Game();
 
+	static constexpr uint16_t INITIAL_BALANCE = 1000;
+
 	void InitTable();
 	void ClearTable();
 
 	std::shared_ptr<Player> GetPlayer() const { return _player; }
 	std::shared_ptr<Player> GetDealer() const { return _dealer; }
 	
-	uint32_t GetBalance()    const { return _balance;      }
-	uint32_t GetCurrentBet() const { return _currentBet;   }
-	bool IsDealersTurn()			 const { return _isDealersTurn; }
+	uint32_t GetBalance()    const { return _balance;       }
+	uint32_t GetCurrentBet() const { return _currentBet;    }
+	bool IsDealersTurn()     const { return _isDealersTurn; }
 
 	GameState GetCurrentState();
 

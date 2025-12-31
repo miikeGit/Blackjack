@@ -1,7 +1,7 @@
 #include "player.h"
 
 Player::Player(std::shared_ptr<Deck> deck) : _deck(deck) {
-	_hand.reserve(11);
+	_hand.reserve(MAX_HAND_SIZE);
 }
 
 void Player::Hit(bool isFaceDown) {

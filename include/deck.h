@@ -2,6 +2,7 @@
 #define BLACKJACK_DECK_H
 
 #include <vector>
+#include <cstdint>
 
 enum class Suit { HEARTS = 1, CLUBS, DIAMONDS, SPADES };
 enum class Rank { ACE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING };
@@ -14,12 +15,14 @@ struct Card {
 
 class Deck {
 public:
-	Deck();
-	void Shuffle();
-	Card Pop();
-	void Reset();
+	Deck();	
 
-	~Deck() = default;
+	static constexpr uint8_t DECK_SIZE = 52;
+
+	void Shuffle();
+	void Reset();
+	Card Pop();
+
 private:
 	std::vector<Card> deck;
 };
