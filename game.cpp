@@ -41,6 +41,11 @@ GameState Game::CheckIfEnded() {
 	if (playerValue > 21) {
 		return GameState::LOSS;
 	}
+	if (playerValue == 21) {
+		_currentBet *= 2;
+		_balance += _currentBet;
+		return GameState::WIN;
+	}
 
 	if (_isDealerDone) {
 		if (dealerValue > 21) {

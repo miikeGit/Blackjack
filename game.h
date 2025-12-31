@@ -19,8 +19,9 @@ public:
 	std::shared_ptr<Player> GetPlayer() const { return _player; }
 	std::shared_ptr<Player> GetDealer() const { return _dealer; }
 	
-	uint32_t GetBalance()    const { return _balance;    }
-	uint32_t GetCurrentBet() const { return _currentBet; }
+	uint32_t GetBalance()    const { return _balance;      }
+	uint32_t GetCurrentBet() const { return _currentBet;   }
+	bool IsDealerDone()			 const { return _isDealerDone; }
 
 	GameState CheckIfEnded();
 

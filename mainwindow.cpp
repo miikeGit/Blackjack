@@ -1,6 +1,7 @@
 #include "game.h"
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "AnimatedCard.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QParallelAnimationGroup>
@@ -265,15 +266,36 @@ QString MainWindow::CardToPath(const Card& card) {
 
 void MainWindow::RenderHand(const std::vector<Card>& hand, std::shared_ptr<QGraphicsScene> scene, QGraphicsView* view) {
 	scene->clear();
-	uint32_t offset = 0;
-	for (const Card& card : hand) {
-		QPixmap pixmap(CardToPath(card));
-		QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
-		item->setPos(offset, 0);
-		item->setScale(3);
+	scene->setSceneRect(0, 0, view->width(), view->height());
 
-		offset += 30;
+	QPixmap temp(CardToPath(hand[0]));
+	uint16_t totalWidth = (temp.width() * CARD_SCALE) + ((hand.size() - 1) * CARD_SPACING);
+	uint16_t startX = (view->width() - totalWidth) / 2;
+
+	for (size_t i = 0; i < hand.size(); ++i) {
+		const Card& card = hand[i];
+		auto aCard = new AnimatedCard(QPixmap(CardToPath(card)));
+		scene->addItem(aCard);
+		aCard->setScale(CARD_SCALE);
+
+		uint16_t cardHeight = aCard->boundingRect().height() * CARD_SCALE;
+		uint16_t yPos = (view->height() - cardHeight) / 2;
+
+		QPoint finalPos(startX + (i * CARD_SPACING), yPos);
+
+		if (i == hand.size() - 1
+				&& (game.IsDealerDone() && scene == _dealerScene
+				|| !game.IsDealerDone() && scene == _playerScene) )
+		{
+			QPropertyAnimation* slideAnimation = new QPropertyAnimation(aCard, "pos");
+			slideAnimation->setDuration(SLIDE_ANIMATION_DURATION);
+			slideAnimation->setStartValue(QPoint(view->width() + 100, yPos));
+			slideAnimation->setEndValue(finalPos);
+			slideAnimation->setEasingCurve(QEasingCurve::OutQuad);
+			slideAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+		} else {
+			aCard->setPos(finalPos);
+		}
 	}
-	scene->setSceneRect(scene->itemsBoundingRect());
 	view->setScene(scene.get());
 }

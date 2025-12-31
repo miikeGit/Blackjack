@@ -27,6 +27,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         deck.h player.h
         assets.qrc
         game.h game.cpp
+        AnimatedCard.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QTBlackjack APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

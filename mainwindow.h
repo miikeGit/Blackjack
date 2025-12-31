@@ -20,10 +20,13 @@ public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
+	static constexpr uint8_t CARD_SCALE = 3;
+	static constexpr uint8_t CARD_SPACING = 40;
 	static constexpr uint8_t OFFST_RNG = 100;
 	static constexpr uint8_t SHAKE_ANIMATION_DURATION = 200;
 	static constexpr uint16_t SIZE_ANIMATION_DURATION = 500;
 	static constexpr uint16_t FADE_ANIMATION_DURATION = 500;
+	static constexpr uint16_t SLIDE_ANIMATION_DURATION = 500;
 
 protected:
 	void resizeEvent(QResizeEvent* event);
