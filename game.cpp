@@ -17,7 +17,7 @@ void Game::InitTable() {
 	_player->Hit(false);
 	_dealer->Hit(true);
 
-	_isDealerDone = false;
+	_isDealersTurn = false;
 }
 
 void Game::ClearTable() {
@@ -34,32 +34,30 @@ void Game::SetCurrentBet(uint32_t newBet) {
 	_currentBet = newBet;
 }
 
-GameState Game::CheckIfEnded() {
+GameState Game::GetCurrentState() {
 	uint8_t playerValue = _player->GetHandValue();
 	uint8_t dealerValue = _dealer->GetHandValue();
 
 	if (playerValue > 21) {
 		return GameState::LOSS;
 	}
-	if (playerValue == 21) {
-		_currentBet *= 2;
-		_balance += _currentBet;
+	else if (playerValue == 21) {
 		return GameState::WIN;
 	}
 
-	if (_isDealerDone) {
+	if (_isDealersTurn) {
 		if (dealerValue > 21) {
-			_currentBet *= 2;
-			_balance += _currentBet;
 			return GameState::WIN;
+		}
+
+		if (dealerValue < 17) {
+			return GameState::IN_PROGRESS;
 		}
 
 		if (dealerValue > playerValue) {
 			return GameState::LOSS;
 		}
 		else if (playerValue >= dealerValue) {
-			_currentBet *= 2;
-			_balance += _currentBet;
 			return GameState::WIN;
 		}
 	}
@@ -67,12 +65,14 @@ GameState Game::CheckIfEnded() {
 	return GameState::IN_PROGRESS;
 }
 
-void Game::MakeDealerPlay() {
-	_dealer->GetHand().back().isFaceDown = false;
+void Game::DealerHit() {
+	_dealer->Hit(false);
+}
 
-	while (_dealer->GetHandValue() < 17) {
-		_dealer->Hit(false);
-	}
+void Game::RevealDealersCard() {
+	_dealer->GetHand().at(1).isFaceDown = false;
+}
 
-	_isDealerDone = true;
+void Game::SetDealersTurn(bool isDealersTurn) {
+	_isDealersTurn = isDealersTurn;
 }

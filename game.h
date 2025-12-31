@@ -21,19 +21,21 @@ public:
 	
 	uint32_t GetBalance()    const { return _balance;      }
 	uint32_t GetCurrentBet() const { return _currentBet;   }
-	bool IsDealerDone()			 const { return _isDealerDone; }
+	bool IsDealersTurn()			 const { return _isDealersTurn; }
 
-	GameState CheckIfEnded();
+	GameState GetCurrentState();
 
-	void SetBalance(uint32_t newBalance);
+	void DealerHit();
+	void RevealDealersCard();
 	void SetCurrentBet(uint32_t newBet);
-	void MakeDealerPlay();
+	void SetBalance(uint32_t newBalance);
+	void SetDealersTurn(bool isDealersTurn);
 
 private:
 	uint32_t _balance;
 	uint32_t _currentBet;
 
-	bool _isDealerDone = false;
+	bool _isDealersTurn = false;
 
 	std::shared_ptr<Deck> _deck;
 	std::shared_ptr<Player> _player;

@@ -48,6 +48,7 @@ private:
 	void UpdateUI();
 	void ReturnToMenu();
 	void InitConnections();
+	void ProcessDealersTurn();
 	void HandleBet(int amount);
 	void EndGame(GameState result);
 	void AnimateLabelPopup(QString text);

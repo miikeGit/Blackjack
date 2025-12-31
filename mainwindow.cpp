@@ -7,6 +7,7 @@
 #include <QParallelAnimationGroup>
 #include <QRandomGenerator>
 #include <QGraphicsPixmapItem>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -30,29 +31,28 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow() {}
 
 void MainWindow::InitConnections() {
-	connect(ui->bet5Button,	  &QPushButton::clicked, this, [this]{ HandleBet(5);			});
-	connect(ui->bet10Button,  &QPushButton::clicked, this, [this]{ HandleBet(10);			});
-	connect(ui->bet25Button,  &QPushButton::clicked, this, [this]{ HandleBet(25);			});
-	connect(ui->bet50Button,  &QPushButton::clicked, this, [this]{ HandleBet(50);			});
-	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100);		});
-	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();				});
-	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu();		});
+	connect(ui->bet5Button,	  &QPushButton::clicked, this, [this]{ HandleBet(5);	 });
+	connect(ui->bet10Button,  &QPushButton::clicked, this, [this]{ HandleBet(10);	 });
+	connect(ui->bet25Button,  &QPushButton::clicked, this, [this]{ HandleBet(25);	 });
+	connect(ui->bet50Button,  &QPushButton::clicked, this, [this]{ HandleBet(50);	 });
+	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100); });
+	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();		 });
+	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu(); });
 
 	connect(ui->standButton,  &QPushButton::clicked, this, [this]{
-		game.MakeDealerPlay();
+		ui->standButton->hide();
+		ui->hitButton->hide();
+		game.SetDealersTurn(true);
+		game.RevealDealersCard();
 		UpdateUI();
-		
-		GameState result = game.CheckIfEnded();
-		if (result != GameState::IN_PROGRESS) {
-			EndGame(result);
-		}
+		ProcessDealersTurn();
 	});
 
 	connect(ui->hitButton,    &QPushButton::clicked, this, [this]{
 		game.GetPlayer()->Hit(false);
 		UpdateUI();
-		
-		GameState result = game.CheckIfEnded();
+
+		GameState result = game.GetCurrentState();
 		if (result != GameState::IN_PROGRESS) {
 			EndGame(result);
 		}
@@ -79,8 +79,8 @@ void MainWindow::InitGame() {
 
 	game.InitTable();
 	UpdateUI();
-	
-	GameState result = game.CheckIfEnded();
+
+	GameState result = game.GetCurrentState();
 	if (result != GameState::IN_PROGRESS) {
 		EndGame(result);
 	}
@@ -92,12 +92,15 @@ void MainWindow::EndGame(GameState result) {
 	ui->backButton->show();
 	ui->infoLabel->show();
 	ui->infoLabel->setStyleSheet("background-color: rgba(0, 0, 0, 100); color: #ffc800;");
-	
+
 	switch (result) {
 		case GameState::WIN:
+			game.SetCurrentBet(game.GetCurrentBet() * 2);
+			game.SetBalance(game.GetBalance() + game.GetCurrentBet());
 			ui->infoLabel->setText("You win " + QString::number(game.GetCurrentBet()));
 			break;
 		case GameState::LOSS:
+			game.SetCurrentBet(0);
 			ui->infoLabel->setText("You lose");
 			break;
 		default:
@@ -108,7 +111,7 @@ void MainWindow::EndGame(GameState result) {
 
 void MainWindow::ReturnToMenu() {
 	game.ClearTable();
-	
+
 	ui->bet5Button->show();
 	ui->bet10Button->show();
 	ui->bet25Button->show();
@@ -126,11 +129,29 @@ void MainWindow::ReturnToMenu() {
 
 	ui->currentBetLabel->show();
 	ui->currentBetLabel->setNum(0);
-	ui->infoLabel->setText("Place your bet");
-	ui->infoLabel->setStyleSheet("");
+
+	if (game.GetBalance() == 0 && game.GetCurrentBet() == 0) {
+		ui->infoLabel->setText("You're broke!");
+	} else {
+		ui->infoLabel->setText("Place your bet");
+		ui->infoLabel->setStyleSheet("");
+	}
+
 	ui->balanceLabel->setText("$ " + QString::number(game.GetBalance()));
 
 	game.SetCurrentBet(0);
+}
+
+void MainWindow::ProcessDealersTurn() {
+	if (game.GetCurrentState() == GameState::IN_PROGRESS && game.GetDealer()->GetHandValue() < 17) {
+		QTimer::singleShot(1000, this, [this]{
+			game.DealerHit();
+			UpdateUI();
+			ProcessDealersTurn();
+		});
+	} else {
+		EndGame(game.GetCurrentState());
+	}
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
@@ -229,18 +250,6 @@ void MainWindow::UpdateUI() {
 	ui->bet10Button->setEnabled(game.GetBalance() >= 10);
 	ui->bet5Button->setEnabled(game.GetBalance() >= 5);
 
-	if (game.GetBalance() < 5) {
-		ui->balanceLabel->setStyleSheet("color: red;");
-		ui->infoLabel->setText("ALL IN!");
-		ui->infoLabel->setStyleSheet("color : #ffc800;");
-	}
-	else {
-		ui->balanceLabel->setStyleSheet("");
-		if (ui->infoLabel->text() == "ALL IN!") {
-			ui->infoLabel->setText("Place your bet");
-		}
-	}
-	
 	RenderHand(game.GetPlayer()->GetHand(), _playerScene, ui->playerHandView);
 	RenderHand(game.GetDealer()->GetHand(), _dealerScene, ui->dealerHandView);
 }
@@ -284,8 +293,8 @@ void MainWindow::RenderHand(const std::vector<Card>& hand, std::shared_ptr<QGrap
 		QPoint finalPos(startX + (i * CARD_SPACING), yPos);
 
 		if (i == hand.size() - 1
-				&& (game.IsDealerDone() && scene == _dealerScene
-				|| !game.IsDealerDone() && scene == _playerScene) )
+				&& ( (game.IsDealersTurn() && scene == _dealerScene && hand.size() > 2)
+				|| (!game.IsDealersTurn() && scene == _playerScene) ) )
 		{
 			QPropertyAnimation* slideAnimation = new QPropertyAnimation(aCard, "pos");
 			slideAnimation->setDuration(SLIDE_ANIMATION_DURATION);
