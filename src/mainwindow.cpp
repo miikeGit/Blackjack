@@ -38,6 +38,12 @@ void MainWindow::InitConnections() {
 
 	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();  });
 	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu(); sfx.button->play(); });
+	connect(ui->resetButton,  &QPushButton::clicked, this, [this]{
+		game.SetBalance(game.GetBalance() + game.GetCurrentBet());
+		game.SetCurrentBet(0);
+		sfx.button->play();
+		UpdateUI();
+	});
 
 	connect(ui->standButton,  &QPushButton::clicked, this, [this]{
 		ui->standButton->hide();
@@ -68,6 +74,7 @@ void MainWindow::InitGame() {
 	ui->bet50Button->hide();
 	ui->bet100Button->hide();
 	ui->startButton->hide();
+	ui->resetButton->hide();
 	ui->infoLabel->hide();
 	ui->currentBetLabel->hide();
 
@@ -118,6 +125,7 @@ void MainWindow::ReturnToMenu() {
 	ui->bet50Button->show();
 	ui->bet100Button->show();
 	ui->startButton->show();
+	ui->resetButton->show();
 	ui->backButton->hide();
 
 	_playerScene->clear();
