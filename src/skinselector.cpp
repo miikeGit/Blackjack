@@ -10,8 +10,16 @@ SkinSelector::SkinSelector(QWidget *parent) :
 	_texturePackPath(":/textures/")
 {
 	ui->setupUi(this);
+
 	connect(ui->loadButton, &QPushButton::clicked, this, [this]{
 		_texturePackPath = QFileDialog::getExistingDirectory(this, "Select Texture Pack", QDir::homePath(), QFileDialog::ShowDirsOnly);
+
+		ui->back_1->setIcon(QIcon(_texturePackPath + "/Back_1.png"));
+		ui->back_2->setIcon(QIcon(_texturePackPath + "/Back_2.png"));
+		ui->back_3->setIcon(QIcon(_texturePackPath + "/Back_3.png"));
+		ui->back_4->setIcon(QIcon(_texturePackPath + "/Back_4.png"));
+		ui->back_5->setIcon(QIcon(_texturePackPath + "/Back_5.png"));
+
 		accept();
 	});
 }
