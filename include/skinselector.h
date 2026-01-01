@@ -17,9 +17,11 @@ public:
 	~SkinSelector();
 
 	const QString GetSkinPath() const;
+	const QString GetTexturePackPath() const;
 
 private:
 	std::unique_ptr<Ui::SkinSelector> ui;
+	QString _texturePackPath;
 };
 
 #endif

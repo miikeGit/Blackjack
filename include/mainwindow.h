@@ -38,7 +38,8 @@ private:
 	SFXManager sfx;
 	SkinSelector skinSelector;
 
-	QString _currentSkinPath;
+	QString _texturePackPath;
+	QString _skinPath;
 
 	std::unique_ptr<Ui::MainWindow> ui;
 	std::shared_ptr<QGraphicsScene> _playerScene;
