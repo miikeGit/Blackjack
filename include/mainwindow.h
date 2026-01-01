@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "sfxmanager.h"
+#include "skinselector.h"
 
 #include <QMainWindow>
 #include <QPropertyAnimation>
@@ -35,6 +36,9 @@ protected:
 private:
 	Game game;
 	SFXManager sfx;
+	SkinSelector skinSelector;
+
+	QString _currentSkinPath;
 
 	std::unique_ptr<Ui::MainWindow> ui;
 	std::shared_ptr<QGraphicsScene> _playerScene;

@@ -12,7 +12,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(std::make_unique<Ui::MainWindow>())
+	ui(std::make_unique<Ui::MainWindow>()),
+	_currentSkinPath(":/textures/Back_1.png")
 {
 	ui->setupUi(this);
 	ui->dealerHandView->hide();
@@ -38,8 +39,10 @@ void MainWindow::InitConnections() {
 	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100); });
 
 	connect(ui->selectSkinAction, &QAction::triggered, this, [this]{
-		SkinSelector skinSelector;
-		skinSelector.exec();
+		if (skinSelector.exec() == QDialog::Accepted) {
+			_currentSkinPath = skinSelector.GetSkinPath();
+			UpdateUI();
+		}
 	});
 
 	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();  });
@@ -277,7 +280,7 @@ void MainWindow::HandleBet(int amount) {
 
 QString MainWindow::CardToPath(const Card& card) {
 	if (card.isFaceDown) {
-		return ":/textures/Back_1.png";
+		return _currentSkinPath;
 	}
 
 	QString suitRank { QString::number(static_cast<int>(card.suit)) + "_"

@@ -2,6 +2,7 @@
 #define SKINSELECTOR_H
 
 #include <QDialog>
+#include <memory>
 
 namespace Ui {
 	class SkinSelector;
@@ -15,8 +16,10 @@ public:
 	explicit SkinSelector(QWidget *parent = nullptr);
 	~SkinSelector();
 
+	const QString GetSkinPath() const;
+
 private:
-	Ui::SkinSelector *ui;
+	std::unique_ptr<Ui::SkinSelector> ui;
 };
 
-#endif // SKINSELECTOR_H
+#endif

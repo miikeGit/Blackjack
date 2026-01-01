@@ -62,6 +62,5 @@
         <file>textures/Back_3.png</file>
         <file>textures/Back_4.png</file>
         <file>textures/Back_5.png</file>
-        <file>textures/background.png</file>
     </qresource>
 </RCC>
