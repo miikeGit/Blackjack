@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
         src/player.cpp
         src/mainwindow.cpp
         src/sfxmanager.cpp
+        src/skinselector.cpp
 
         include/deck.h
         include/game.h
@@ -25,10 +26,12 @@ set(PROJECT_SOURCES
         include/mainwindow.h
         include/sfxmanager.h
         include/AnimatedCard.h
+        include/skinselector.h
 
         assets/assets.qrc
 
         ui/mainwindow.ui
+        ui/skinselector.ui
 )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PROJECT_SOURCES})

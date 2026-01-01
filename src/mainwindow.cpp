@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "AnimatedCard.h"
+#include "skinselector.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QParallelAnimationGroup>
@@ -35,6 +36,11 @@ void MainWindow::InitConnections() {
 	connect(ui->bet25Button,  &QPushButton::clicked, this, [this]{ HandleBet(25);	 });
 	connect(ui->bet50Button,  &QPushButton::clicked, this, [this]{ HandleBet(50);	 });
 	connect(ui->bet100Button, &QPushButton::clicked, this, [this]{ HandleBet(100); });
+
+	connect(ui->selectSkinAction, &QAction::triggered, this, [this]{
+		SkinSelector skinSelector;
+		skinSelector.exec();
+	});
 
 	connect(ui->startButton,  &QPushButton::clicked, this, [this]{ InitGame();  });
 	connect(ui->backButton,   &QPushButton::clicked, this, [this]{ ReturnToMenu(); sfx.button->play(); });
