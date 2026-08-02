@@ -1,6 +1,6 @@
 #include "game.h"
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "ui_mainwindow.h"
 #include "AnimatedCard.h"
 
 #include <QGraphicsOpacityEffect>
